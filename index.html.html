@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Auditoria de Carrinho</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #FFE600;
+      --yellow-dark: #D4A017;
+      --yellow-light: rgba(255,230,0,0.15);
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --surface2: #f9f9f9;
+      --text: #1a1a1a;
+      --text2: #5a5a5a;
+      --text3: #999;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.2);
+      --radius: 8px;
+      --radius-lg: 12px;
+      --green-bg: #EAF3DE; --green-text: #3B6D11;
+      --amber-bg: #FAEEDA; --amber-text: #854F0B;
+      --red-bg: #FCEBEB;   --red-text: #A32D2D;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --surface: #242424;
+        --surface2: #2e2e2e;
+        --text: #f0f0f0;
+        --text2: #aaa;
+        --text3: #666;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+        --green-bg: #1c2e10; --green-text: #a8d97f;
+        --amber-bg: #2e2010; --amber-text: #f0b95a;
+        --red-bg: #2e1010;   --red-text: #f08080;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    .topbar {
+      background: var(--yellow);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .topbar h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .topbar-logo {
+      background: #1a1a1a;
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+    .topbar-date {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    /* Filtros */
+    .filters {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .filter-label {
+      font-size: 13px;
+      color: var(--text2);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .filters select,
+    .filters input[type=date] {
+      font-size: 13px;
+      padding: 7px 11px;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius);
+      background: var(--surface2);
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .filters select:focus,
+    .filters input[type=date]:focus {
+      border-color: var(--yellow-dark);
+    }
+    .btn-aplicar {
+      background: var(--yellow);
+      color: #1a1a1a;
+      border: none;
+      padding: 7px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-aplicar:hover { opacity: 0.85; }
+    .btn-limpar {
+      background: transparent;
+      color: var(--text2);
+      border: 0.5px solid var(--border2);
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-limpar:hover { background: var(--surface2); }
+
+    /* KPIs */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--surface2);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .badge-up   { background: var(--green-bg); color: var(--green-text); }
+    .badge-down { background: var(--red-bg);   color: var(--red-text);   }
+    .badge-warn { background: var(--amber-bg); color: var(--amber-text); }
+
+    /* Charts */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 640px) {
+      .charts-row { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    /* Legenda */
+    .legenda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+    .legenda-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    /* Tabela */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left;
+      font-weight: 500;
+      color: var(--text2);
+      padding: 8px 10px;
+      border-bottom: 0.5px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 8px 10px;
+      border-bottom: 0.5px solid var(--border);
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .pill-ok   { background: var(--green-bg); color: var(--green-text); }
+    .pill-pend { background: var(--amber-bg); color: var(--amber-text); }
+    .pill-err  { background: var(--red-bg);   color: var(--red-text);   }
+
+    .prog-wrap {
+      background: var(--surface2);
+      border-radius: 999px;
+      height: 6px;
+      width: 70px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .prog-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--yellow);
+    }
+
+    code { font-family: monospace; font-size: 12px; }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text3);
+      padding: 24px 0 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">ML</span>
+    <h1>Auditoria de Carrinho</h1>
+  </div>
+  <span class="topbar-date" id="data-atual"></span>
+</div>
+
+<div class="container">
+
+  <!-- Filtros -->
+  <div class="filters">
+    <span class="filter-label"><i class="ti ti-filter"></i> Filtros:</span>
+    <input type="date" id="f-inicio" value="2026-06-01" />
+    <span style="font-size:13px;color:var(--text3);">até</span>
+    <input type="date" id="f-fim" value="2026-06-15" />
+    <select id="f-status">
+      <option value="">Todos os status</option>
+      <option value="auditado">Auditado</option>
+      <option value="pendente">Pendente</option>
+      <option value="erro">Com erro</option>
+    </select>
+    <select id="f-canal">
+      <option value="">Todos os canais</option>
+      <option value="app">App</option>
+      <option value="web">Web</option>
+      <option value="api">API</option>
+    </select>
+    <button class="btn-aplicar" onclick="renderAll()">
+      <i class="ti ti-refresh"></i> Aplicar
+    </button>
+    <button class="btn-limpar" onclick="limpar()">Limpar</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis" id="kpis"></div>
+
+  <!-- Gráficos linha + pizza -->
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-title">Auditoria por dia (%)</div>
+      <div style="position:relative;width:100%;height:200px;">
+        <canvas id="chartLinha" role="img" aria-label="Percentual de auditoria por dia"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribuição por canal</div>
+      <div class="legenda" id="legenda-pizza"></div>
+      <div style="position:relative;width:100%;height:170px;">
+        <canvas id="chartPizza" role="img" aria-label="Distribuição por canal"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico barras -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">Percentual médio de auditoria por vendedor (top 8)</div>
+    <div style="position:relative;width:100%;height:260px;">
+      <canvas id="chartBarra" role="img" aria-label="Auditoria por vendedor"></canvas>
+    </div>
+  </div>
+
+  <!-- Tabela -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:10px;">
+      Detalhes das auditorias recentes
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID Carrinho</th>
+            <th>Data</th>
+            <th>Canal</th>
+            <th>Vendedor</th>
+            <th>% Auditado</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>Dashboard Auditoria de Carrinho &mdash; Mercado Livre</footer>
+
+<script>
+  // Data atual
+  document.getElementById('data-atual').textContent =
+    'Atualizado: ' + new Date().toLocaleDateString('pt-BR');
+
+  // Dados de exemplo
+  const DADOS = [
+    { id:'C-10021', data:'2026-06-01', canal:'app', vendedor:'Ana Souza',      pct:98,  status:'auditado' },
+    { id:'C-10022', data:'2026-06-02', canal:'web', vendedor:'Bruno Lima',     pct:72,  status:'pendente' },
+    { id:'C-10023', data:'2026-06-03', canal:'api', vendedor:'Carla Melo',     pct:100, status:'auditado' },
+    { id:'C-10024', data:'2026-06-04', canal:'app', vendedor:'Diego Ramos',    pct:45,  status:'pendente' },
+    { id:'C-10025', data:'2026-06-05', canal:'web', vendedor:'Elisa Pinto',    pct:88,  status:'auditado' },
+    { id:'C-10026', data:'2026-06-06', canal:'api', vendedor:'Felipe Gomes',   pct:12,  status:'erro'     },
+    { id:'C-10027', data:'2026-06-07', canal:'app', vendedor:'Gabriela Neto',  pct:95,  status:'auditado' },
+    { id:'C-10028', data:'2026-06-08', canal:'web', vendedor:'Henrique Dias',  pct:61,  status:'pendente' },
+    { id:'C-10029', data:'2026-06-09', canal:'api', vendedor:'Isabela Costa',  pct:100, status:'auditado' },
+    { id:'C-10030', data:'2026-06-10', canal:'app', vendedor:'João Alves',     pct:80,  status:'auditado' },
+    { id:'C-10031', data:'2026-06-11', canal:'web', vendedor:'Karina Lopes',   pct:5,   status:'erro'     },
+    { id:'C-10032', data:'2026-06-12', canal:'api', vendedor:'Lucas Ferreira', pct:92,  status:'auditado' },
+    { id:'C-10033', data:'2026-06-13', canal:'app', vendedor:'Mariana Silva',  pct:67,  status:'pendente' },
+    { id:'C-10034', data:'2026-06-14', canal:'web', vendedor:'Natan Rocha',    pct:100, status:'auditado' },
+    { id:'C-10035', data:'2026-06-15', canal:'api', vendedor:'Olivia Mendes',  pct:38,  status:'pendente' },
+  ];
+
+  let cLinha, cPizza, cBarra;
+
+  function filtrar() {
+    const ini = document.getElementById('f-inicio').value;
+    const fim = document.getElementById('f-fim').value;
+    const st  = document.getElementById('f-status').value;
+    const cn  = document.getElementById('f-canal').value;
+    return DADOS.filter(d =>
+      (!ini || d.data >= ini) &&
+      (!fim || d.data <= fim) &&
+      (!st  || d.status === st) &&
+      (!cn  || d.canal === cn)
+    );
+  }
+
+  function renderKPIs(dados) {
+    const total = dados.length;
+    const media = total ? Math.round(dados.reduce((s,d)=>s+d.pct,0)/total) : 0;
+    const audit = dados.filter(d=>d.status==='auditado').length;
+    const pend  = dados.filter(d=>d.status==='pendente').length;
+    const erros = dados.filter(d=>d.status==='erro').length;
+    const pctA  = total ? Math.round(audit/total*100) : 0;
+
+    document.getElementById('kpis').innerHTML = `
+      <div class="kpi-card">
+        <div class="kpi-label">Total de carrinhos</div>
+        <div class="kpi-value">${total}</div>
+        <div class="kpi-label">no período</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Média de auditoria</div>
+        <div class="kpi-value">${media}%</div>
+        <span class="badge ${media>=80?'badge-up':'badge-down'}">${media>=80?'▲ Meta atingida':'▼ Abaixo da meta'}</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Auditados</div>
+        <div class="kpi-value">${audit}</div>
+        <div class="kpi-label">${pctA}% do total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pendentes</div>
+        <div class="kpi-value">${pend}</div>
+        <span class="badge badge-warn">aguardando</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Com erro</div>
+        <div class="kpi-value">${erros}</div>
+        <span class="badge ${erros===0?'badge-up':'badge-down'}">${erros===0?'Sem erros':'Requer atenção'}</span>
+      </div>
+    `;
+  }
+
+  function renderLinha(dados) {
+    if (cLinha) cLinha.destroy();
+    const labels = dados.map(d=>d.data.slice(5));
+    const vals   = dados.map(d=>d.pct);
+    cLinha = new Chart(document.getElementById('chartLinha'), {
+      type: 'line',
+      data: { labels, datasets: [{
+        label: '% Auditado', data: vals,
+        borderColor: '#D4A017', backgroundColor: 'rgba(255,230,0,0.15)',
+        tension: 0.35, fill: true,
+        pointRadius: 4, pointBackgroundColor: '#FFE600',
+        pointBorderColor: '#D4A017', pointBorderWidth: 1.5, borderWidth: 2,
+      }]},
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { min:0, max:100, ticks:{ callback:v=>v+'%', font:{size:11} }, grid:{ color:'rgba(128,128,128,0.1)' } },
+          x: { ticks:{ font:{size:11}, maxRotation:45, autoSkip:false } }
+        }
+      }
+    });
+  }
+
+  function renderPizza(dados) {
+    if (cPizza) cPizza.destroy();
+    const canais = {app:0, web:0, api:0};
+    dados.forEach(d=>{ if(d.canal in canais) canais[d.canal]++; });
+    const labels = Object.keys(canais);
+    const vals   = Object.values(canais);
+    const cores  = ['#FFE600','#D4A017','#a37b11'];
+    document.getElementById('legenda-pizza').innerHTML = labels.map((l,i)=>`
+      <span class="legenda-item">
+        <span class="legenda-dot" style="background:${cores[i]}"></span>
+        ${l.toUpperCase()} (${vals[i]})
+      </span>`).join('');
+    cPizza = new Chart(document.getElementById('chartPizza'), {
+      type: 'doughnut',
+      data: { labels, datasets:[{ data:vals, backgroundColor:cores, borderWidth:2, borderColor:'#fff' }] },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
+    });
+  }
+
+  function renderBarra(dados) {
+    if (cBarra) cBarra.destroy();
+    const mapa = {};
+    dados.forEach(d=>{
+      if(!mapa[d.vendedor]) mapa[d.vendedor]={soma:0,n:0};
+      mapa[d.vendedor].soma+=d.pct; mapa[d.vendedor].n++;
+    });
+    const sorted = Object.entries(mapa)
+      .map(([v,m])=>({v, media:Math.round(m.soma/m.n)}))
+      .sort((a,b)=>b.media-a.media).slice(0,8);
+    cBarra = new Chart(document.getElementById('chartBarra'), {
+      type: 'bar',
+      data: {
+        labels: sorted.map(d=>d.v.split(' ')[0]),
+        datasets:[{ label:'% Auditado', data:sorted.map(d=>d.media),
+          backgroundColor: sorted.map(d=>d.media>=80?'#FFE600':'#EF9F27'),
+          borderRadius:4, borderSkipped:false }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ display:false } },
+        scales:{
+          y:{ min:0, max:100, ticks:{callback:v=>v+'%',font:{size:11}}, grid:{color:'rgba(128,128,128,0.1)'} },
+          x:{ ticks:{font:{size:11}} }
+        }
+      }
+    });
+  }
+
+  function renderTabela(dados) {
+    const rows = dados.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,15);
+    const pc = s => s==='auditado'?'pill-ok':s==='pendente'?'pill-pend':'pill-err';
+    const pl = s => s==='auditado'?'Auditado':s==='pendente'?'Pendente':'Erro';
+    document.getElementById('tbody').innerHTML = rows.map(d=>`
+      <tr>
+        <td><code>${d.id}</code></td>
+        <td>${d.data.split('-').reverse().join('/')}</td>
+        <td style="text-transform:uppercase;font-size:12px;">${d.canal}</td>
+        <td>${d.vendedor}</td>
+        <td>
+          <span style="font-weight:600;margin-right:8px;">${d.pct}%</span>
+          <span class="prog-wrap"><span class="prog-bar" style="width:${d.pct}%"></span></span>
+        </td>
+        <td><span class="pill ${pc(d.status)}">${pl(d.status)}</span></td>
+      </tr>`).join('');
+  }
+
+  function renderAll() {
+    const dados = filtrar();
+    renderKPIs(dados);
+    renderLinha(dados);
+    renderPizza(dados);
+    renderBarra(dados);
+    renderTabela(dados);
+  }
+
+  function limpar() {
+    document.getElementById('f-inicio').value = '2026-06-01';
+    document.getElementById('f-fim').value    = '2026-06-15';
+    document.getElementById('f-status').value = '';
+    document.getElementById('f-canal').value  = '';
+    renderAll();
+  }
+
+  renderAll();
+</script>
+</body>
+</html>
