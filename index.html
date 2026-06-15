@@ -4,79 +4,287 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — Auditoria de Carrinho SMG10</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --yellow: #FFE600; --yellow-dark: #D4A017;
-      --bg: #f4f4f4; --surface: #ffffff; --surface2: #f9f9f9;
-      --text: #1a1a1a; --text2: #5a5a5a; --text3: #aaa;
-      --border: rgba(0,0,0,0.09); --border2: rgba(0,0,0,0.18);
-      --radius: 8px; --radius-lg: 12px;
-      --green-bg:#EAF3DE;--green-t:#3B6D11;
-      --amber-bg:#FAEEDA;--amber-t:#854F0B;
-      --red-bg:#FCEBEB;--red-t:#A32D2D;
+      --ml-yellow: #FFE600;
+      --ml-yellow-dark: #C8A000;
+      --ml-blue: #3483FA;
+      --ml-blue-dark: #2968C8;
+      --ml-blue-light: #EBF0FB;
+      --bg: #EDEDED;
+      --surface: #ffffff;
+      --surface2: #F5F5F5;
+      --text: #1a1a1a;
+      --text2: #666;
+      --text3: #999;
+      --border: rgba(0,0,0,0.08);
+      --border2: rgba(0,0,0,0.15);
+      --radius: 6px;
+      --radius-lg: 10px;
+      --green-bg: #EAF7EC; --green-t: #2E7D32;
+      --amber-bg: #FFF8E1; --amber-t: #F57F17;
+      --red-bg:   #FEECEC; --red-t:   #C62828;
     }
-    @media(prefers-color-scheme:dark){
-      :root{--bg:#1a1a1a;--surface:#242424;--surface2:#2e2e2e;--text:#f0f0f0;--text2:#aaa;--text3:#555;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.18);--green-bg:#1c2e10;--green-t:#a8d97f;--amber-bg:#2e2010;--amber-t:#f0b95a;--red-bg:#2e1010;--red-t:#f08080;}
+    body {
+      font-family: 'Proxima Nova', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
-    .topbar { background: var(--yellow); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
-    .topbar h1 { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-    .logo { background: #1a1a1a; color: var(--yellow); font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 6px; }
-    .facility-tag { background: rgba(0,0,0,0.12); color: #1a1a1a; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
-    .topbar-date { font-size: 12px; color: #555; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
-    .filters { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
-    .filter-label { font-size: 13px; color: var(--text2); font-weight: 500; white-space: nowrap; }
-    .filters select, .filters input[type=date] { font-size: 13px; padding: 6px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--surface2); color: var(--text); outline: none; }
-    .btn-ok { background: var(--yellow); color: #1a1a1a; border: none; padding: 7px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; }
-    .btn-ok:hover { opacity: 0.85; }
-    .btn-cl { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); padding: 7px 12px; border-radius: var(--radius); font-size: 13px; cursor: pointer; }
-    .btn-cl:hover { background: var(--surface2); }
-    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
-    .kpi { background: var(--surface2); border-radius: var(--radius); padding: 14px 16px; }
-    .kpi-l { font-size: 12px; color: var(--text2); margin-bottom: 5px; }
-    .kpi-v { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; margin-bottom: 5px; }
-    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
-    .b-up { background: var(--green-bg); color: var(--green-t); }
-    .b-dn { background: var(--red-bg); color: var(--red-t); }
-    .b-am { background: var(--amber-bg); color: var(--amber-t); }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--ml-yellow);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+
+    /* Logo SVG inline do Mercado Livre */
+    .ml-logo { height: 32px; display: flex; align-items: center; }
+
+    .topbar-divider { width: 1px; height: 24px; background: rgba(0,0,0,0.18); }
+    .topbar-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    .facility-tag {
+      background: rgba(0,0,0,0.1);
+      color: #1a1a1a;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .topbar-date { font-size: 12px; color: #333; }
+    .topbar-badge {
+      background: var(--ml-blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1140px; margin: 0 auto; padding: 20px 16px 32px; }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--text3);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .breadcrumb span { color: var(--ml-blue); cursor: pointer; }
+
+    /* ── FILTROS ── */
+    .filters {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    .filter-label { font-size: 13px; color: var(--text2); font-weight: 600; white-space: nowrap; }
+    .filters select, .filters input[type=date] {
+      font-size: 13px;
+      padding: 7px 11px;
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      background: var(--surface2);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .filters select:focus, .filters input[type=date]:focus { border-color: var(--ml-blue); }
+    .btn-ok {
+      background: var(--ml-blue);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-ok:hover { background: var(--ml-blue-dark); }
+    .btn-cl {
+      background: transparent;
+      color: var(--ml-blue);
+      border: 1px solid var(--ml-blue);
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-cl:hover { background: var(--ml-blue-light); }
+
+    /* ── KPIs ── */
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .kpi {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+      border-left: 4px solid var(--ml-yellow);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi.kpi-blue  { border-left-color: var(--ml-blue); }
+    .kpi.kpi-green { border-left-color: #2E7D32; }
+    .kpi.kpi-red   { border-left-color: #C62828; }
+    .kpi.kpi-amber { border-left-color: #F57F17; }
+    .kpi-l { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+    .kpi-v { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 6px; }
+    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+    .b-up  { background: var(--green-bg); color: var(--green-t); }
+    .b-dn  { background: var(--red-bg);   color: var(--red-t);   }
+    .b-am  { background: var(--amber-bg); color: var(--amber-t); }
+
+    /* ── CARDS ── */
     .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
-    @media(max-width:640px){ .row2 { grid-template-columns: 1fr; } }
-    .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
-    .card-t { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 12px; }
-    .leg { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
-    .leg-item { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text2); }
-    .leg-dot { width:10px; height:10px; border-radius:2px; display:inline-block; }
-    .table-wrap { overflow-x: auto; margin-top: 4px; }
+    @media(max-width:680px){ .row2 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    .card-t {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card-t-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .card-t-line span {
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .meta-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text3);
+    }
+    .meta-dot { width: 8px; height: 8px; border-radius: 50%; background: #2E7D32; display: inline-block; }
+
+    /* Legenda */
+    .leg { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); font-weight: 500; }
+    .leg-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+    /* ── TABELA ── */
+    .table-wrap { overflow-x: auto; }
     table.dtbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.dtbl th { text-align: left; font-weight: 500; color: var(--text2); padding: 7px 10px; border-bottom: 0.5px solid var(--border); white-space: nowrap; }
-    table.dtbl td { padding: 7px 10px; border-bottom: 0.5px solid var(--border); color: var(--text); }
+    table.dtbl th {
+      text-align: left; font-weight: 700; color: var(--text2);
+      padding: 9px 12px; border-bottom: 2px solid var(--ml-yellow);
+      white-space: nowrap; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    table.dtbl td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
     table.dtbl tr:last-child td { border-bottom: none; }
-    table.dtbl tr:hover td { background: var(--surface2); }
-    .pill { display:inline-block; font-size:11px; padding:2px 9px; border-radius:999px; font-weight:500; }
-    .p-ok  { background:var(--green-bg); color:var(--green-t); }
-    .p-mid { background:var(--amber-bg); color:var(--amber-t); }
-    .p-low { background:var(--red-bg);   color:var(--red-t);   }
-    .prog-wrap { background:var(--surface2); border-radius:999px; height:6px; width:70px; overflow:hidden; display:inline-block; vertical-align:middle; }
-    .prog-bar  { height:6px; border-radius:999px; background:var(--yellow); }
-    footer { text-align:center; font-size:12px; color:var(--text3); padding:20px 0 14px; }
-    code { font-family:monospace; font-size:12px; }
+    table.dtbl tr:hover td { background: var(--ml-blue-light); }
+
+    .pill { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; }
+    .p-ok  { background: var(--green-bg); color: var(--green-t); }
+    .p-mid { background: var(--amber-bg); color: var(--amber-t); }
+    .p-low { background: var(--red-bg);   color: var(--red-t);   }
+
+    .prog-wrap { background: #eee; border-radius: 999px; height: 6px; width: 70px; overflow: hidden; display: inline-block; vertical-align: middle; }
+    .prog-bar  { height: 6px; border-radius: 999px; }
+
+    /* ── META INDICATOR ── */
+    .meta-indicator {
+      background: var(--green-bg);
+      border: 1px solid #A5D6A7;
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--green-t);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text3);
+      padding: 20px 0 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    code { font-family: monospace; font-size: 12px; }
   </style>
 </head>
 <body>
+
+<!-- TOPBAR com logo SVG do Mercado Livre -->
 <div class="topbar">
   <div class="topbar-left">
-    <span class="logo">ML</span>
-    <h1>Auditoria de Carrinho</h1>
+    <!-- Logo Mercado Livre SVG -->
+    <div class="ml-logo">
+      <svg height="32" viewBox="0 0 180 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Carrinho / ícone ML simplificado -->
+        <rect x="0" y="8" width="32" height="32" rx="6" fill="#333333"/>
+        <text x="4" y="30" font-family="Arial" font-weight="900" font-size="18" fill="#FFE600">ML</text>
+        <!-- Texto -->
+        <text x="40" y="22" font-family="Arial" font-weight="700" font-size="13" fill="#1a1a1a">Mercado</text>
+        <text x="40" y="38" font-family="Arial" font-weight="700" font-size="13" fill="#1a1a1a">Livre</text>
+      </svg>
+    </div>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">Auditoria de Carrinho</span>
     <span class="facility-tag">SMG10</span>
   </div>
-  <span class="topbar-date" id="dt"></span>
+  <div class="topbar-right">
+    <span class="topbar-date" id="dt"></span>
+    <span class="topbar-badge">MLB</span>
+  </div>
 </div>
+
 <div class="container">
+
+  <div class="breadcrumb">
+    <span>Início</span> › <span>Operações</span> › Auditoria de Carrinho
+  </div>
+
+  <!-- Meta indicator -->
+  <div class="meta-indicator">
+    ✓ Meta de auditoria: <strong>70%</strong> — dias acima da meta destacados em verde
+  </div>
+
+  <!-- Filtros -->
   <div class="filters">
     <span class="filter-label">Filtros:</span>
     <input type="date" id="f-ini" value="2026-01-02" />
@@ -93,102 +301,200 @@
     </select>
     <select id="f-perf">
       <option value="">Todos os desempenhos</option>
-      <option value="alto">Alto (≥50%)</option>
-      <option value="medio">Médio (20–49%)</option>
-      <option value="baixo">Baixo (&lt;20%)</option>
+      <option value="alto">Acima da meta (≥70%)</option>
+      <option value="medio">Médio (30–69%)</option>
+      <option value="baixo">Baixo (&lt;30%)</option>
     </select>
-    <button class="btn-ok" onclick="renderAll()">Aplicar</button>
+    <button class="btn-ok" onclick="renderAll()">Aplicar filtro</button>
     <button class="btn-cl" onclick="limpar()">Limpar</button>
   </div>
+
+  <!-- KPIs -->
   <div class="kpis" id="kpis"></div>
+
+  <!-- Gráfico linha + pizza -->
   <div class="row2">
     <div class="card">
-      <div class="card-t">Percentual de auditoria por dia (%)</div>
-      <div style="position:relative;width:100%;height:220px;">
+      <div class="card-t-line">
+        <span>Percentual de auditoria por dia</span>
+        <div class="meta-line"><span class="meta-dot"></span>Meta 70%</div>
+      </div>
+      <div style="position:relative;width:100%;height:230px;">
         <canvas id="cLinha" role="img" aria-label="Percentual de auditoria por dia"></canvas>
       </div>
     </div>
     <div class="card">
       <div class="card-t">Distribuição por faixa</div>
       <div class="leg" id="leg-pizza"></div>
-      <div style="position:relative;width:100%;height:180px;">
-        <canvas id="cPizza" role="img" aria-label="Distribuição por faixa"></canvas>
+      <div style="position:relative;width:100%;height:185px;">
+        <canvas id="cPizza" role="img" aria-label="Distribuição por faixa de desempenho"></canvas>
       </div>
     </div>
   </div>
+
+  <!-- Barras mensais -->
   <div class="card" style="margin-bottom:16px;">
     <div class="card-t">Média mensal de auditoria (%)</div>
-    <div style="position:relative;width:100%;height:200px;">
-      <canvas id="cBarra" role="img" aria-label="Média mensal"></canvas>
+    <div style="position:relative;width:100%;height:210px;">
+      <canvas id="cBarra" role="img" aria-label="Média mensal de auditoria"></canvas>
     </div>
   </div>
+
+  <!-- Tabela -->
   <div class="card">
-    <div class="card-t" style="margin-bottom:10px;">Detalhes por data (últimos 20 registros)</div>
+    <div class="card-t" style="margin-bottom:12px;">Detalhes por data</div>
     <div class="table-wrap">
       <table class="dtbl">
-        <thead><tr><th>Data</th><th>Site</th><th>Facility</th><th>% Auditoria</th><th>Desempenho</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Site</th>
+            <th>Facility</th>
+            <th>% Auditoria</th>
+            <th>vs. Meta (70%)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
   </div>
+
 </div>
-<footer>Dashboard Auditoria Carrinho — MLB / SMG10 — Dados: Jan–Jun 2026</footer>
+
+<footer>Dashboard Auditoria de Carrinho &mdash; Mercado Livre &mdash; MLB / SMG10 &mdash; Jan–Jun 2026</footer>
+
 <script>
-document.getElementById('dt').textContent = 'Atualizado: ' + new Date().toLocaleDateString('pt-BR');
+const META = 70;
+document.getElementById('dt').textContent = new Date().toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric'});
+
 const DADOS = [{"data":"2026-01-02","site":"MLB","facility":"SMG10","pct":51.6},{"data":"2026-01-03","site":"MLB","facility":"SMG10","pct":66.7},{"data":"2026-01-04","site":"MLB","facility":"SMG10","pct":24.0},{"data":"2026-01-05","site":"MLB","facility":"SMG10","pct":40.4},{"data":"2026-01-06","site":"MLB","facility":"SMG10","pct":54.8},{"data":"2026-01-07","site":"MLB","facility":"SMG10","pct":56.0},{"data":"2026-01-08","site":"MLB","facility":"SMG10","pct":32.0},{"data":"2026-01-09","site":"MLB","facility":"SMG10","pct":37.3},{"data":"2026-01-10","site":"MLB","facility":"SMG10","pct":72.7},{"data":"2026-01-11","site":"MLB","facility":"SMG10","pct":14.8},{"data":"2026-01-12","site":"MLB","facility":"SMG10","pct":41.7},{"data":"2026-01-13","site":"MLB","facility":"SMG10","pct":58.3},{"data":"2026-01-14","site":"MLB","facility":"SMG10","pct":74.2},{"data":"2026-01-15","site":"MLB","facility":"SMG10","pct":52.9},{"data":"2026-01-16","site":"MLB","facility":"SMG10","pct":26.7},{"data":"2026-01-17","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-01-18","site":"MLB","facility":"SMG10","pct":23.3},{"data":"2026-01-19","site":"MLB","facility":"SMG10","pct":57.5},{"data":"2026-01-20","site":"MLB","facility":"SMG10","pct":39.1},{"data":"2026-01-21","site":"MLB","facility":"SMG10","pct":46.9},{"data":"2026-01-22","site":"MLB","facility":"SMG10","pct":51.6},{"data":"2026-01-23","site":"MLB","facility":"SMG10","pct":57.1},{"data":"2026-01-24","site":"MLB","facility":"SMG10","pct":34.8},{"data":"2026-01-25","site":"MLB","facility":"SMG10","pct":44.0},{"data":"2026-01-26","site":"MLB","facility":"SMG10","pct":36.2},{"data":"2026-01-27","site":"MLB","facility":"SMG10","pct":37.8},{"data":"2026-01-28","site":"MLB","facility":"SMG10","pct":53.8},{"data":"2026-01-29","site":"MLB","facility":"SMG10","pct":40.0},{"data":"2026-01-30","site":"MLB","facility":"SMG10","pct":44.4},{"data":"2026-01-31","site":"MLB","facility":"SMG10","pct":37.0},{"data":"2026-02-01","site":"MLB","facility":"SMG10","pct":16.7},{"data":"2026-02-02","site":"MLB","facility":"SMG10","pct":32.4},{"data":"2026-02-03","site":"MLB","facility":"SMG10","pct":30.0},{"data":"2026-02-04","site":"MLB","facility":"SMG10","pct":38.3},{"data":"2026-02-05","site":"MLB","facility":"SMG10","pct":37.9},{"data":"2026-02-06","site":"MLB","facility":"SMG10","pct":56.8},{"data":"2026-02-07","site":"MLB","facility":"SMG10","pct":36.8},{"data":"2026-02-08","site":"MLB","facility":"SMG10","pct":12.4},{"data":"2026-02-09","site":"MLB","facility":"SMG10","pct":32.7},{"data":"2026-02-10","site":"MLB","facility":"SMG10","pct":26.7},{"data":"2026-02-11","site":"MLB","facility":"SMG10","pct":37.3},{"data":"2026-02-12","site":"MLB","facility":"SMG10","pct":35.8},{"data":"2026-02-13","site":"MLB","facility":"SMG10","pct":40.4},{"data":"2026-02-14","site":"MLB","facility":"SMG10","pct":37.7},{"data":"2026-02-15","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-02-16","site":"MLB","facility":"SMG10","pct":11.8},{"data":"2026-02-17","site":"MLB","facility":"SMG10","pct":10.4},{"data":"2026-02-18","site":"MLB","facility":"SMG10","pct":16.5},{"data":"2026-02-19","site":"MLB","facility":"SMG10","pct":11.0},{"data":"2026-02-20","site":"MLB","facility":"SMG10","pct":15.0},{"data":"2026-02-21","site":"MLB","facility":"SMG10","pct":37.3},{"data":"2026-02-22","site":"MLB","facility":"SMG10","pct":2.9},{"data":"2026-02-23","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-02-24","site":"MLB","facility":"SMG10","pct":1.3},{"data":"2026-02-25","site":"MLB","facility":"SMG10","pct":9.0},{"data":"2026-02-26","site":"MLB","facility":"SMG10","pct":0.9},{"data":"2026-02-27","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-02-28","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-01","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-02","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-03","site":"MLB","facility":"SMG10","pct":3.1},{"data":"2026-03-04","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-05","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-06","site":"MLB","facility":"SMG10","pct":5.3},{"data":"2026-03-07","site":"MLB","facility":"SMG10","pct":9.3},{"data":"2026-03-08","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-09","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-10","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-11","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-12","site":"MLB","facility":"SMG10","pct":8.8},{"data":"2026-03-13","site":"MLB","facility":"SMG10","pct":26.5},{"data":"2026-03-14","site":"MLB","facility":"SMG10","pct":1.1},{"data":"2026-03-15","site":"MLB","facility":"SMG10","pct":9.1},{"data":"2026-03-16","site":"MLB","facility":"SMG10","pct":1.2},{"data":"2026-03-17","site":"MLB","facility":"SMG10","pct":2.2},{"data":"2026-03-18","site":"MLB","facility":"SMG10","pct":14.3},{"data":"2026-03-19","site":"MLB","facility":"SMG10","pct":6.0},{"data":"2026-03-20","site":"MLB","facility":"SMG10","pct":31.4},{"data":"2026-03-21","site":"MLB","facility":"SMG10","pct":44.4},{"data":"2026-03-22","site":"MLB","facility":"SMG10","pct":9.3},{"data":"2026-03-23","site":"MLB","facility":"SMG10","pct":6.2},{"data":"2026-03-24","site":"MLB","facility":"SMG10","pct":18.2},{"data":"2026-03-25","site":"MLB","facility":"SMG10","pct":16.9},{"data":"2026-03-26","site":"MLB","facility":"SMG10","pct":25.6},{"data":"2026-03-27","site":"MLB","facility":"SMG10","pct":54.5},{"data":"2026-03-28","site":"MLB","facility":"SMG10","pct":51.4},{"data":"2026-03-29","site":"MLB","facility":"SMG10","pct":10.7},{"data":"2026-03-30","site":"MLB","facility":"SMG10","pct":14.9},{"data":"2026-03-31","site":"MLB","facility":"SMG10","pct":48.8},{"data":"2026-04-01","site":"MLB","facility":"SMG10","pct":53.7},{"data":"2026-04-02","site":"MLB","facility":"SMG10","pct":38.2},{"data":"2026-04-03","site":"MLB","facility":"SMG10","pct":26.7},{"data":"2026-04-04","site":"MLB","facility":"SMG10","pct":34.5},{"data":"2026-04-05","site":"MLB","facility":"SMG10","pct":3.6},{"data":"2026-04-06","site":"MLB","facility":"SMG10","pct":20.7},{"data":"2026-04-07","site":"MLB","facility":"SMG10","pct":51.5},{"data":"2026-04-08","site":"MLB","facility":"SMG10","pct":53.3},{"data":"2026-04-09","site":"MLB","facility":"SMG10","pct":60.0},{"data":"2026-04-10","site":"MLB","facility":"SMG10","pct":52.0},{"data":"2026-04-11","site":"MLB","facility":"SMG10","pct":48.3},{"data":"2026-04-12","site":"MLB","facility":"SMG10","pct":44.1},{"data":"2026-04-13","site":"MLB","facility":"SMG10","pct":53.1},{"data":"2026-04-14","site":"MLB","facility":"SMG10","pct":81.8},{"data":"2026-04-15","site":"MLB","facility":"SMG10","pct":55.0},{"data":"2026-04-16","site":"MLB","facility":"SMG10","pct":40.7},{"data":"2026-04-17","site":"MLB","facility":"SMG10","pct":30.0},{"data":"2026-04-18","site":"MLB","facility":"SMG10","pct":52.2},{"data":"2026-04-19","site":"MLB","facility":"SMG10","pct":60.0},{"data":"2026-04-20","site":"MLB","facility":"SMG10","pct":13.3},{"data":"2026-04-21","site":"MLB","facility":"SMG10","pct":45.5},{"data":"2026-04-22","site":"MLB","facility":"SMG10","pct":25.5},{"data":"2026-04-23","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-04-24","site":"MLB","facility":"SMG10","pct":68.4},{"data":"2026-04-25","site":"MLB","facility":"SMG10","pct":37.5},{"data":"2026-04-26","site":"MLB","facility":"SMG10","pct":28.6},{"data":"2026-04-27","site":"MLB","facility":"SMG10","pct":12.8},{"data":"2026-04-28","site":"MLB","facility":"SMG10","pct":42.3},{"data":"2026-04-29","site":"MLB","facility":"SMG10","pct":35.0},{"data":"2026-04-30","site":"MLB","facility":"SMG10","pct":40.6},{"data":"2026-05-01","site":"MLB","facility":"SMG10","pct":35.9},{"data":"2026-05-02","site":"MLB","facility":"SMG10","pct":12.6},{"data":"2026-05-03","site":"MLB","facility":"SMG10","pct":3.1},{"data":"2026-05-04","site":"MLB","facility":"SMG10","pct":13.2},{"data":"2026-05-05","site":"MLB","facility":"SMG10","pct":56.0},{"data":"2026-05-06","site":"MLB","facility":"SMG10","pct":20.0},{"data":"2026-05-07","site":"MLB","facility":"SMG10","pct":56.5},{"data":"2026-05-08","site":"MLB","facility":"SMG10","pct":34.8},{"data":"2026-05-09","site":"MLB","facility":"SMG10","pct":36.0},{"data":"2026-05-10","site":"MLB","facility":"SMG10","pct":13.6},{"data":"2026-05-11","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-05-12","site":"MLB","facility":"SMG10","pct":12.3},{"data":"2026-05-13","site":"MLB","facility":"SMG10","pct":6.5},{"data":"2026-05-14","site":"MLB","facility":"SMG10","pct":10.2},{"data":"2026-05-15","site":"MLB","facility":"SMG10","pct":8.8},{"data":"2026-05-16","site":"MLB","facility":"SMG10","pct":4.2},{"data":"2026-05-17","site":"MLB","facility":"SMG10","pct":9.1},{"data":"2026-05-18","site":"MLB","facility":"SMG10","pct":7.9},{"data":"2026-05-19","site":"MLB","facility":"SMG10","pct":9.1},{"data":"2026-05-20","site":"MLB","facility":"SMG10","pct":15.5},{"data":"2026-05-21","site":"MLB","facility":"SMG10","pct":18.9},{"data":"2026-05-22","site":"MLB","facility":"SMG10","pct":36.6},{"data":"2026-05-23","site":"MLB","facility":"SMG10","pct":30.8},{"data":"2026-05-24","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-05-25","site":"MLB","facility":"SMG10","pct":8.9},{"data":"2026-05-26","site":"MLB","facility":"SMG10","pct":28.1},{"data":"2026-05-27","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-05-28","site":"MLB","facility":"SMG10","pct":26.0},{"data":"2026-05-29","site":"MLB","facility":"SMG10","pct":28.9},{"data":"2026-05-30","site":"MLB","facility":"SMG10","pct":51.5},{"data":"2026-05-31","site":"MLB","facility":"SMG10","pct":12.0},{"data":"2026-06-01","site":"MLB","facility":"SMG10","pct":20.5},{"data":"2026-06-02","site":"MLB","facility":"SMG10","pct":20.6},{"data":"2026-06-03","site":"MLB","facility":"SMG10","pct":18.2},{"data":"2026-06-04","site":"MLB","facility":"SMG10","pct":13.1},{"data":"2026-06-05","site":"MLB","facility":"SMG10","pct":28.2},{"data":"2026-06-06","site":"MLB","facility":"SMG10","pct":38.7},{"data":"2026-06-07","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-06-08","site":"MLB","facility":"SMG10","pct":15.2},{"data":"2026-06-09","site":"MLB","facility":"SMG10","pct":26.3},{"data":"2026-06-10","site":"MLB","facility":"SMG10","pct":51.4},{"data":"2026-06-11","site":"MLB","facility":"SMG10","pct":37.0},{"data":"2026-06-12","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-06-13","site":"MLB","facility":"SMG10","pct":37.8},{"data":"2026-06-14","site":"MLB","facility":"SMG10","pct":0.0}];
 
 let cL, cP, cB;
-function perf(p){ return p>=50?'alto':p>=20?'medio':'baixo'; }
+function perf(p){ return p>=META?'alto':p>=30?'medio':'baixo'; }
+
 function filtrar(){
   const ini=document.getElementById('f-ini').value, fim=document.getElementById('f-fim').value;
   const mes=document.getElementById('f-mes').value, pf=document.getElementById('f-perf').value;
   return DADOS.filter(d=>(!ini||d.data>=ini)&&(!fim||d.data<=fim)&&(!mes||d.data.startsWith(mes))&&(!pf||perf(d.pct)===pf));
 }
+
 function renderKPIs(d){
-  const n=d.length, med=n?+(d.reduce((s,x)=>s+x.pct,0)/n).toFixed(1):0;
-  const max=n?Math.max(...d.map(x=>x.pct)):0, min=n?Math.min(...d.map(x=>x.pct)):0;
-  const alto=d.filter(x=>x.pct>=50).length, pAlt=n?Math.round(alto/n*100):0;
+  const n=d.length;
+  const med=n?+(d.reduce((s,x)=>s+x.pct,0)/n).toFixed(1):0;
+  const max=n?Math.max(...d.map(x=>x.pct)):0;
+  const min=n?Math.min(...d.map(x=>x.pct)):0;
+  const acima=d.filter(x=>x.pct>=META).length;
+  const pAcima=n?Math.round(acima/n*100):0;
+  const atingeMeta = med >= META;
   document.getElementById('kpis').innerHTML=`
-    <div class="kpi"><div class="kpi-l">Dias analisados</div><div class="kpi-v">${n}</div><div class="kpi-l">no período</div></div>
-    <div class="kpi"><div class="kpi-l">Média de auditoria</div><div class="kpi-v">${med}%</div><span class="badge ${med>=40?'b-up':'b-dn'}">${med>=40?'▲ Acima de 40%':'▼ Abaixo de 40%'}</span></div>
-    <div class="kpi"><div class="kpi-l">Máximo registrado</div><div class="kpi-v">${max}%</div><span class="badge b-up">melhor dia</span></div>
-    <div class="kpi"><div class="kpi-l">Mínimo registrado</div><div class="kpi-v">${min}%</div><span class="badge ${min>0?'b-am':'b-dn'}">${min>0?'acima de zero':'zero'}</span></div>
-    <div class="kpi"><div class="kpi-l">Dias com ≥50%</div><div class="kpi-v">${alto}</div><div class="kpi-l">${pAlt}% dos dias</div></div>`;
+    <div class="kpi kpi-blue"><div class="kpi-l">Dias analisados</div><div class="kpi-v">${n}</div><div class="kpi-l">no período</div></div>
+    <div class="kpi ${atingeMeta?'kpi-green':'kpi-red'}"><div class="kpi-l">Média de auditoria</div><div class="kpi-v">${med}%</div><span class="badge ${atingeMeta?'b-up':'b-dn'}">${atingeMeta?'✓ Acima da meta':'✗ Abaixo da meta'}</span></div>
+    <div class="kpi kpi-green"><div class="kpi-l">Máximo registrado</div><div class="kpi-v">${max}%</div><span class="badge b-up">melhor dia</span></div>
+    <div class="kpi kpi-amber"><div class="kpi-l">Mínimo registrado</div><div class="kpi-v">${min}%</div><span class="badge ${min>0?'b-am':'b-dn'}">${min>0?'acima de zero':'zero'}</span></div>
+    <div class="kpi ${pAcima>=50?'kpi-green':'kpi-red'}"><div class="kpi-l">Dias acima de 70%</div><div class="kpi-v">${acima}</div><div class="kpi-l">${pAcima}% dos dias</div></div>`;
 }
+
 function renderLinha(d){
-  if(cL)cL.destroy();
-  cL=new Chart(document.getElementById('cLinha'),{type:'line',data:{labels:d.map(x=>x.data.slice(5)),datasets:[{label:'% Auditoria',data:d.map(x=>x.pct),borderColor:'#D4A017',backgroundColor:'rgba(255,230,0,0.12)',tension:0.3,fill:true,pointRadius:2.5,pointBackgroundColor:d.map(x=>x.pct>=50?'#3B6D11':x.pct>=20?'#D4A017':'#A32D2D'),pointBorderColor:'transparent',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(128,128,128,0.08)'}},x:{ticks:{font:{size:10},maxRotation:45,autoSkip:true,maxTicksLimit:20}}}}});
+  if(cL) cL.destroy();
+  const labels=d.map(x=>x.data.slice(5));
+  const vals=d.map(x=>x.pct);
+  const metaLine=vals.map(()=>META);
+  cL=new Chart(document.getElementById('cLinha'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'% Auditoria',data:vals,borderColor:'#3483FA',backgroundColor:'rgba(52,131,250,0.08)',tension:0.3,fill:true,pointRadius:3,pointBackgroundColor:vals.map(v=>v>=META?'#2E7D32':v>=30?'#F57F17':'#C62828'),pointBorderColor:'white',pointBorderWidth:1.5,borderWidth:2.5,order:1},
+        {label:'Meta (70%)',data:metaLine,borderColor:'#2E7D32',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,order:2}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:12,padding:16}}},
+      scales:{
+        y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}},
+        x:{ticks:{font:{size:10},maxRotation:45,autoSkip:true,maxTicksLimit:18}}
+      }
+    }
+  });
 }
+
 function renderPizza(d){
-  if(cP)cP.destroy();
-  const alto=d.filter(x=>x.pct>=50).length, medio=d.filter(x=>x.pct>=20&&x.pct<50).length, baixo=d.filter(x=>x.pct<20).length;
-  const cores=['#3B6D11','#D4A017','#A32D2D'];
-  document.getElementById('leg-pizza').innerHTML=[['Alto ≥50%',alto],['Médio 20–49%',medio],['Baixo <20%',baixo]].map(([l,v],i)=>`<span class="leg-item"><span class="leg-dot" style="background:${cores[i]}"></span>${l} (${v})</span>`).join('');
-  cP=new Chart(document.getElementById('cPizza'),{type:'doughnut',data:{labels:['Alto','Médio','Baixo'],datasets:[{data:[alto,medio,baixo],backgroundColor:cores,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  if(cP) cP.destroy();
+  const alto=d.filter(x=>x.pct>=META).length;
+  const medio=d.filter(x=>x.pct>=30&&x.pct<META).length;
+  const baixo=d.filter(x=>x.pct<30).length;
+  const cores=['#2E7D32','#F57F17','#C62828'];
+  document.getElementById('leg-pizza').innerHTML=[
+    [`Acima da meta ≥${META}%`,alto],['Médio 30–69%',medio],['Baixo <30%',baixo]
+  ].map(([l,v],i)=>`<span class="leg-item"><span class="leg-dot" style="background:${cores[i]}"></span>${l} (${v})</span>`).join('');
+  cP=new Chart(document.getElementById('cPizza'),{
+    type:'doughnut',
+    data:{labels:[`≥${META}%`,'30–69%','<30%'],datasets:[{data:[alto,medio,baixo],backgroundColor:cores,borderWidth:3,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'65%'}
+  });
 }
+
 function renderBarra(d){
-  if(cB)cB.destroy();
+  if(cB) cB.destroy();
   const meses={}, nomeMes={'2026-01':'Jan','2026-02':'Fev','2026-03':'Mar','2026-04':'Abr','2026-05':'Mai','2026-06':'Jun'};
   d.forEach(x=>{const m=x.data.slice(0,7);if(!meses[m])meses[m]={soma:0,n:0};meses[m].soma+=x.pct;meses[m].n++;});
   const sorted=Object.entries(meses).sort((a,b)=>a[0].localeCompare(b[0]));
-  const labels=sorted.map(([k])=>nomeMes[k]||k), vals=sorted.map(([,v])=>+(v.soma/v.n).toFixed(1));
-  cB=new Chart(document.getElementById('cBarra'),{type:'bar',data:{labels,datasets:[{label:'Média %',data:vals,backgroundColor:vals.map(v=>v>=50?'#3B6D11':v>=20?'#FFE600':'#E24B4A'),borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(128,128,128,0.08)'}},x:{ticks:{font:{size:12}}}}}});
+  const labels=sorted.map(([k])=>nomeMes[k]||k);
+  const vals=sorted.map(([,v])=>+(v.soma/v.n).toFixed(1));
+  cB=new Chart(document.getElementById('cBarra'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Média mensal %',data:vals,backgroundColor:vals.map(v=>v>=META?'#2E7D32':v>=30?'#3483FA':'#C62828'),borderRadius:6,borderSkipped:false},
+        {label:'Meta (70%)',data:vals.map(()=>META),type:'line',borderColor:'#2E7D32',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:12,padding:16}}},
+      scales:{
+        y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,0.05)'}},
+        x:{ticks:{font:{size:12}}}
+      }
+    }
+  });
 }
+
 function renderTabela(d){
   const rows=d.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,20);
-  const pc=p=>p>=50?'p-ok':p>=20?'p-mid':'p-low', pl=p=>p>=50?'Alto':p>=20?'Médio':'Baixo';
-  document.getElementById('tbody').innerHTML=rows.map(x=>`<tr><td>${x.data.split('-').reverse().join('/')}</td><td><code>${x.site}</code></td><td><code>${x.facility}</code></td><td><span style="font-weight:600;margin-right:8px;">${x.pct}%</span><span class="prog-wrap"><span class="prog-bar" style="width:${x.pct}%"></span></span></td><td><span class="pill ${pc(x.pct)}">${pl(x.pct)}</span></td></tr>`).join('');
+  const pc=p=>p>=META?'p-ok':p>=30?'p-mid':'p-low';
+  const pl=p=>p>=META?'Acima da meta':p>=30?'Médio':'Baixo';
+  const barColor=p=>p>=META?'#2E7D32':p>=30?'#3483FA':'#C62828';
+  const diff=p=>{ const d=+(p-META).toFixed(1); return d>=0?`<span style="color:#2E7D32;font-weight:700">+${d}%</span>`:`<span style="color:#C62828;font-weight:700">${d}%</span>`; };
+  document.getElementById('tbody').innerHTML=rows.map(x=>`
+    <tr>
+      <td>${x.data.split('-').reverse().join('/')}</td>
+      <td><code>${x.site}</code></td>
+      <td><code>${x.facility}</code></td>
+      <td>
+        <span style="font-weight:700;margin-right:8px;">${x.pct}%</span>
+        <span class="prog-wrap"><span class="prog-bar" style="width:${x.pct}%;background:${barColor(x.pct)}"></span></span>
+      </td>
+      <td>${diff(x.pct)}</td>
+      <td><span class="pill ${pc(x.pct)}">${pl(x.pct)}</span></td>
+    </tr>`).join('');
 }
+
 function renderAll(){
   const mes=document.getElementById('f-mes').value;
-  if(mes){const[ano,m]=mes.split('-');const ultimo=new Date(+ano,+m,0).getDate();document.getElementById('f-ini').value=`${mes}-01`;document.getElementById('f-fim').value=`${mes}-${String(ultimo).padStart(2,'0')}`;}
+  if(mes){const[ano,m]=mes.split('-');const ul=new Date(+ano,+m,0).getDate();document.getElementById('f-ini').value=`${mes}-01`;document.getElementById('f-fim').value=`${mes}-${String(ul).padStart(2,'0')}`;}
   const d=filtrar();
-  renderKPIs(d);renderLinha(d);renderPizza(d);renderBarra(d);renderTabela(d);
+  renderKPIs(d); renderLinha(d); renderPizza(d); renderBarra(d); renderTabela(d);
 }
+
 function limpar(){
   document.getElementById('f-ini').value='2026-01-02';document.getElementById('f-fim').value='2026-06-14';
   document.getElementById('f-mes').value='';document.getElementById('f-perf').value='';renderAll();
 }
+
 renderAll();
 </script>
 </body>
