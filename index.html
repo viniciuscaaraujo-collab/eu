@@ -131,6 +131,11 @@ select:focus{border-color:var(--y)}
 .breadcrumb{font-size:12px;color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .breadcrumb a{color:var(--yd);cursor:pointer;text-decoration:none}
 code{font-family:monospace;font-size:12px;color:var(--y)}
+.kpi.kpi-blue .kpi-v{color:var(--blue)}
+.kpi.kpi-green .kpi-v{color:var(--gn)}
+.kpi.kpi-red .kpi-v{color:var(--rd)}
+.kpi.kpi-amber .kpi-v{color:var(--am)}
+.kpi .kpi-v{color:var(--y)}
 footer{text-align:center;font-size:12px;color:var(--t3);padding:20px 0 14px;border-top:1px solid var(--b1);margin-top:8px}
 @media(max-width:700px){.sidebar{display:none}.container{padding:14px}.two-col{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
 </style>
@@ -166,21 +171,33 @@ footer{text-align:center;font-size:12px;color:var(--t3);padding:20px 0 14px;bord
       <div class="sb-logo-t">📦 SMG10</div>
       <div class="sb-logo-s">Painel Operacional 2026</div>
     </div>
-    <div class="sb-sec">🛒 Auditoria</div>
-    <div class="nav-item active" id="nav-auditoria" onclick="goAuditoria()">
-      <span style="font-size:15px">📊</span>Auditoria Carrinho
+
+    <!-- Indicadores: grid 2x2 -->
+    <div style="font-size:9px;font-weight:800;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;padding:10px 12px 4px">Indicadores</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 10px;border-bottom:0.5px solid var(--b1)">
+      <div id="nav-auditoria" onclick="goAuditoria()" style="background:rgba(255,230,0,.1);border:1.5px solid #FFE600;border-radius:8px;padding:10px 8px;cursor:pointer;text-align:center">
+        <div style="font-size:20px;margin-bottom:4px">📊</div>
+        <div style="font-size:10px;font-weight:700;color:#FFE600;font-family:'Nunito',sans-serif">Auditoria</div>
+        <div id="sb-val-auditoria" style="font-size:13px;font-weight:800;color:#6FCF7F;margin-top:3px;font-family:'Nunito',sans-serif">28.3%</div>
+      </div>
+      <div id="nav-fag" onclick="goFAG()" style="background:var(--s2);border:0.5px solid var(--b2);border-radius:8px;padding:10px 8px;cursor:pointer;text-align:center">
+        <div style="font-size:20px;margin-bottom:4px">🔒</div>
+        <div style="font-size:10px;font-weight:700;color:var(--t2);font-family:'Nunito',sans-serif">FAG</div>
+        <div id="sb-val-fag" style="font-size:13px;font-weight:800;color:#6FCF7F;margin-top:3px;font-family:'Nunito',sans-serif">73.2%</div>
+      </div>
     </div>
-    <div class="sb-sec">🏭 FAG</div>
-    <div class="nav-item" id="nav-fag" onclick="goFAG()">
-      <span style="font-size:15px">🔒</span>Fechamento Gaiolas
+
+    <!-- Produtividade: lista -->
+    <div style="font-size:9px;font-weight:800;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;padding:10px 12px 4px">Produtividade</div>
+    <div style="display:flex;flex-direction:column;gap:4px;padding:0 10px">
+      <div id="nav-geral"      onclick="goProd('geral')"      style="background:var(--s2);border:0.5px solid var(--b2);border-radius:7px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:14px">📈</span><span style="font-size:11px;font-weight:600;color:var(--t2);font-family:'Nunito',sans-serif">Visão geral</span></div>
+      <div id="nav-sorting"    onclick="goProd('sorting')"    style="background:var(--s2);border:0.5px solid var(--b2);border-radius:7px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:14px">🔀</span><span style="font-size:11px;font-weight:600;color:var(--t2);font-family:'Nunito',sans-serif">Sorting</span></div>
+      <div id="nav-labeling"   onclick="goProd('labeling')"   style="background:var(--s2);border:0.5px solid var(--b2);border-radius:7px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:14px">🏷️</span><span style="font-size:11px;font-weight:600;color:var(--t2);font-family:'Nunito',sans-serif">Labeling</span></div>
+      <div id="nav-historico"  onclick="goProd('historico')"  style="background:var(--s2);border:0.5px solid var(--b2);border-radius:7px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:14px">📅</span><span style="font-size:11px;font-weight:600;color:var(--t2);font-family:'Nunito',sans-serif">Histórico</span></div>
+      <div id="nav-individual" onclick="goProd('individual')" style="background:var(--s2);border:0.5px solid var(--b2);border-radius:7px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:14px">👤</span><span style="font-size:11px;font-weight:600;color:var(--t2);font-family:'Nunito',sans-serif">Individual</span></div>
+      <div id="nav-pessoal"    onclick="goProd('pessoal')"    style="background:var(--s2);border:0.5px solid var(--b2);border-radius:7px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:14px">⚡</span><span style="font-size:11px;font-weight:600;color:var(--t2);font-family:'Nunito',sans-serif">Efic. pessoal</span></div>
     </div>
-    <div class="sb-sec">⚡ Produtividade</div>
-    <div class="nav-item" id="nav-geral"      onclick="goProd('geral')"><span style="font-size:15px">📈</span>Visão geral</div>
-    <div class="nav-item" id="nav-sorting"    onclick="goProd('sorting')"><span style="font-size:15px">🔀</span>Sorting</div>
-    <div class="nav-item" id="nav-labeling"   onclick="goProd('labeling')"><span style="font-size:15px">🏷️</span>Labeling</div>
-    <div class="nav-item" id="nav-historico"  onclick="goProd('historico')"><span style="font-size:15px">📅</span>Histórico</div>
-    <div class="nav-item" id="nav-individual" onclick="goProd('individual')"><span style="font-size:15px">👤</span>Individual</div>
-    <div class="nav-item" id="nav-pessoal"    onclick="goProd('pessoal')"><span style="font-size:15px">⚡</span>Efic. pessoal</div>
+
     <div class="sb-foot">Base: 14/05 a 15/06/2026<br>Produtividade: média 3h<br>Auditoria: % rotas sem CA</div>
   </aside>
 
@@ -648,7 +665,19 @@ var ALL_NAV = ['auditoria','fag','geral','sorting','labeling','historico','indiv
 function setNav(id) {
   ALL_NAV.forEach(function(n){
     var el = document.getElementById('nav-'+n);
-    if(el) el.classList.toggle('active', n===id);
+    if(!el) return;
+    if(n === 'auditoria') {
+      el.style.background = id==='auditoria' ? 'rgba(255,230,0,.18)' : 'rgba(255,230,0,.1)';
+      el.style.border = id==='auditoria' ? '2px solid #FFE600' : '1.5px solid #FFE600';
+    } else if(n === 'fag') {
+      el.style.background = id==='fag' ? 'rgba(52,131,250,.18)' : 'var(--s2)';
+      el.style.border = id==='fag' ? '2px solid #3483FA' : '0.5px solid var(--b2)';
+    } else {
+      el.style.background = id===n ? 'rgba(255,230,0,.1)' : 'var(--s2)';
+      el.style.border = id===n ? '1px solid rgba(255,230,0,.4)' : '0.5px solid var(--b2)';
+      var txt = el.querySelector('span:last-child');
+      if(txt) txt.style.color = id===n ? '#FFE600' : 'var(--t2)';
+    }
   });
 }
 
