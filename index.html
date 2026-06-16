@@ -170,6 +170,10 @@ footer{text-align:center;font-size:12px;color:var(--t3);padding:20px 0 14px;bord
     <div class="nav-item active" id="nav-auditoria" onclick="goAuditoria()">
       <span style="font-size:15px">📊</span>Auditoria Carrinho
     </div>
+    <div class="sb-sec">🏭 FAG</div>
+    <div class="nav-item" id="nav-fag" onclick="goFAG()">
+      <span style="font-size:15px">🔒</span>Fechamento Gaiolas
+    </div>
     <div class="sb-sec">⚡ Produtividade</div>
     <div class="nav-item" id="nav-geral"      onclick="goProd('geral')"><span style="font-size:15px">📈</span>Visão geral</div>
     <div class="nav-item" id="nav-sorting"    onclick="goProd('sorting')"><span style="font-size:15px">🔀</span>Sorting</div>
@@ -360,6 +364,65 @@ function limpar(){
 renderAll();
 </script>
 
+    </div>
+    <div id="panel-fag" class="panel">
+<div class="container">
+  <div class="breadcrumb"><a>Início</a> › <a>Operações</a> › FAG</div>
+  <div class="meta-banner">
+    <span class="meta-banner-dot"></span>
+    Meta FAG: <strong>70%</strong> — AM, PM e Dia acima da meta destacados em verde
+  </div>
+  <div class="filters">
+    <span class="filter-label">Filtros:</span>
+    <input type="date" id="fag-ini" value="2026-05-24"/>
+    <span style="font-size:13px;color:var(--t3)">até</span>
+    <input type="date" id="fag-fim" value="2026-06-15"/>
+    <select id="fag-view">
+      <option value="diario">Visão Diária</option>
+      <option value="semanal">Visão Semanal</option>
+      <option value="mensal">Visão Mensal</option>
+    </select>
+    <button class="btn-ok" onclick="fagRender()">Aplicar</button>
+    <button class="btn-cl" onclick="fagLimpar()">Limpar</button>
+  </div>
+  <div class="kpis" id="fag-kpis"></div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-t-row">
+      <span id="fag-chart-title">FAG por dia — AM vs PM vs Média do Dia</span>
+      <span class="meta-chip">Meta 70%</span>
+    </div>
+    <div class="leg">
+      <span class="leg-item"><span class="leg-dot" style="background:#3483FA"></span>FAG AM</span>
+      <span class="leg-item"><span class="leg-dot" style="background:#FFE600"></span>FAG PM</span>
+      <span class="leg-item"><span class="leg-dot" style="background:#6FCF7F"></span>Média do Dia</span>
+      <span class="leg-item"><span class="leg-dot" style="background:#F07070;opacity:.6"></span>Meta (70%)</span>
+    </div>
+    <div style="position:relative;width:100%;height:260px"><canvas id="fag-chart-main"></canvas></div>
+  </div>
+  <div class="row2">
+    <div class="card">
+      <div class="card-t">Comparativo AM vs PM</div>
+      <div style="position:relative;width:100%;height:220px"><canvas id="fag-chart-bar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-t">Distribuição por faixa (Dia)</div>
+      <div class="leg" id="fag-leg-pizza"></div>
+      <div style="position:relative;width:100%;height:185px"><canvas id="fag-chart-pizza"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-t" style="margin-bottom:12px">Detalhe por data</div>
+    <div class="table-wrap">
+      <table class="dtbl">
+        <thead><tr>
+          <th>Data</th><th>FAG AM</th><th>FAG PM</th>
+          <th>Média Dia</th><th>vs. Meta (70%)</th><th>Status</th>
+        </tr></thead>
+        <tbody id="fag-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
     </div>
     <div id="panel-prod" class="panel">
 
@@ -581,7 +644,7 @@ renderAll();
 document.getElementById('dt-top').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
 
 // ── NAV HELPERS ──
-var ALL_NAV = ['auditoria','geral','sorting','labeling','historico','individual','pessoal'];
+var ALL_NAV = ['auditoria','fag','geral','sorting','labeling','historico','individual','pessoal'];
 function setNav(id) {
   ALL_NAV.forEach(function(n){
     var el = document.getElementById('nav-'+n);
@@ -591,8 +654,17 @@ function setNav(id) {
 
 var prodReady = false;
 
+function goFAG() {
+  document.getElementById('panel-auditoria').classList.remove('active');
+  document.getElementById('panel-prod').classList.remove('active');
+  document.getElementById('panel-fag').classList.add('active');
+  setNav('fag');
+  fagRender();
+}
+
 function goAuditoria() {
   document.getElementById('panel-prod').classList.remove('active');
+  document.getElementById('panel-fag').classList.remove('active');
   document.getElementById('panel-auditoria').classList.add('active');
   setNav('auditoria');
   renderAll();
@@ -600,6 +672,7 @@ function goAuditoria() {
 
 function goProd(view) {
   document.getElementById('panel-auditoria').classList.remove('active');
+  document.getElementById('panel-fag').classList.remove('active');
   document.getElementById('panel-prod').classList.add('active');
   setNav(view);
   if (!prodReady) { buildGeral(); prodReady = true; }
@@ -1069,5 +1142,158 @@ window.setView = function(v) { _sv(v); setNav(v); };
 renderAll();
 </script>
 
+<script>
+// ── FAG SCRIPT ──
+
+const FAG_META = 70;
+const FAG_DADOS = [{"data": "2026-05-24", "am": 53.97, "pm": 53.97, "dia": 53.97, "hasAM": true, "hasPM": false}, {"data": "2026-05-25", "am": 56.67, "pm": 77.22, "dia": 66.94, "hasAM": true, "hasPM": true}, {"data": "2026-05-26", "am": 72.0, "pm": 81.0, "dia": 76.5, "hasAM": true, "hasPM": true}, {"data": "2026-05-27", "am": 86.3, "pm": 84.29, "dia": 85.3, "hasAM": true, "hasPM": true}, {"data": "2026-05-28", "am": 56.1, "pm": 84.51, "dia": 70.31, "hasAM": true, "hasPM": true}, {"data": "2026-05-29", "am": 79.01, "pm": 87.5, "dia": 83.25, "hasAM": true, "hasPM": true}, {"data": "2026-05-30", "am": 79.01, "pm": 91.03, "dia": 85.02, "hasAM": true, "hasPM": true}, {"data": "2026-05-31", "am": 65.0, "pm": 65.0, "dia": 65.0, "hasAM": true, "hasPM": false}, {"data": "2026-06-01", "am": 67.9, "pm": 67.54, "dia": 67.72, "hasAM": true, "hasPM": true}, {"data": "2026-06-02", "am": 75.56, "pm": 78.79, "dia": 77.18, "hasAM": true, "hasPM": true}, {"data": "2026-06-03", "am": 54.22, "pm": 70.0, "dia": 62.11, "hasAM": true, "hasPM": true}, {"data": "2026-06-04", "am": 63.4, "pm": 63.4, "dia": 63.4, "hasAM": false, "hasPM": true}, {"data": "2026-06-05", "am": 80.23, "pm": 76.74, "dia": 78.48, "hasAM": true, "hasPM": true}, {"data": "2026-06-06", "am": 83.57, "pm": 83.57, "dia": 83.57, "hasAM": true, "hasPM": false}, {"data": "2026-06-07", "am": 71.43, "pm": 71.43, "dia": 71.43, "hasAM": false, "hasPM": false}, {"data": "2026-06-08", "am": 74.62, "pm": 74.62, "dia": 74.62, "hasAM": false, "hasPM": false}, {"data": "2026-06-09", "am": 75.86, "pm": 75.86, "dia": 75.86, "hasAM": false, "hasPM": false}, {"data": "2026-06-10", "am": 82.42, "pm": 82.42, "dia": 82.42, "hasAM": false, "hasPM": false}, {"data": "2026-06-11", "am": 84.56, "pm": 84.56, "dia": 84.56, "hasAM": false, "hasPM": false}, {"data": "2026-06-12", "am": 84.28, "pm": 84.28, "dia": 84.28, "hasAM": false, "hasPM": false}, {"data": "2026-06-13", "am": 76.44, "pm": 76.44, "dia": 76.44, "hasAM": false, "hasPM": false}, {"data": "2026-06-14", "am": 14.1, "pm": 14.1, "dia": 14.1, "hasAM": false, "hasPM": false}, {"data": "2026-06-15", "am": 80.6, "pm": 80.6, "dia": 80.6, "hasAM": false, "hasPM": false}];
+
+let fagCMain=null, fagCBar=null, fagCPizza=null;
+
+function fagFiltrar() {
+  const ini=document.getElementById('fag-ini').value;
+  const fim=document.getElementById('fag-fim').value;
+  let d=FAG_DADOS.filter(x=>(!ini||x.data>=ini)&&(!fim||x.data<=fim));
+  const view=document.getElementById('fag-view').value;
+  if(view==='semanal'){
+    const g={};
+    d.forEach(x=>{
+      const dt=new Date(x.data); dt.setHours(0,0,0,0);
+      dt.setDate(dt.getDate()-dt.getDay()+1);
+      const wk=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+      if(!g[wk])g[wk]={am:[],pm:[],dia:[]};
+      g[wk].am.push(x.am);g[wk].pm.push(x.pm);g[wk].dia.push(x.dia);
+    });
+    d=Object.entries(g).map(([w,v])=>({
+      data:w,
+      am:+(v.am.reduce((a,b)=>a+b,0)/v.am.length).toFixed(1),
+      pm:+(v.pm.reduce((a,b)=>a+b,0)/v.pm.length).toFixed(1),
+      dia:+(v.dia.reduce((a,b)=>a+b,0)/v.dia.length).toFixed(1)
+    }));
+  } else if(view==='mensal'){
+    const g={};
+    d.forEach(x=>{
+      const m=x.data.slice(0,7);
+      if(!g[m])g[m]={am:[],pm:[],dia:[]};
+      g[m].am.push(x.am);g[m].pm.push(x.pm);g[m].dia.push(x.dia);
+    });
+    const nm={'2026-05':'Mai 2026','2026-06':'Jun 2026'};
+    d=Object.entries(g).map(([m,v])=>({
+      data:nm[m]||m,
+      am:+(v.am.reduce((a,b)=>a+b,0)/v.am.length).toFixed(1),
+      pm:+(v.pm.reduce((a,b)=>a+b,0)/v.pm.length).toFixed(1),
+      dia:+(v.dia.reduce((a,b)=>a+b,0)/v.dia.length).toFixed(1)
+    }));
+  }
+  return d;
+}
+
+function fagRenderKPIs(d){
+  if(!d.length){document.getElementById('fag-kpis').innerHTML='';return;}
+  const avgAM=+(d.reduce((s,x)=>s+x.am,0)/d.length).toFixed(1);
+  const avgPM=+(d.reduce((s,x)=>s+x.pm,0)/d.length).toFixed(1);
+  const avgDia=+(d.reduce((s,x)=>s+x.dia,0)/d.length).toFixed(1);
+  const best=d.reduce((b,x)=>x.dia>b.dia?x:b);
+  const acima=d.filter(x=>x.dia>=FAG_META).length;
+  const pAcima=Math.round(acima/d.length*100);
+  const ok=v=>v>=FAG_META;
+  document.getElementById('fag-kpis').innerHTML=`
+    <div class="kpi kpi-blue"><div class="kpi-l">Períodos analisados</div><div class="kpi-v">${d.length}</div><div class="kpi-l">no filtro</div></div>
+    <div class="kpi ${ok(avgAM)?'kpi-green':'kpi-red'}"><div class="kpi-l">Média FAG AM</div><div class="kpi-v">${avgAM}%</div><span class="${ok(avgAM)?'b-up':'b-dn'}">${ok(avgAM)?'✓ Meta':'✗ Abaixo'}</span></div>
+    <div class="kpi ${ok(avgPM)?'kpi-green':'kpi-red'}"><div class="kpi-l">Média FAG PM</div><div class="kpi-v">${avgPM}%</div><span class="${ok(avgPM)?'b-up':'b-dn'}">${ok(avgPM)?'✓ Meta':'✗ Abaixo'}</span></div>
+    <div class="kpi ${ok(avgDia)?'kpi-green':'kpi-red'}"><div class="kpi-l">Média Geral Dia</div><div class="kpi-v">${avgDia}%</div><span class="${ok(avgDia)?'b-up':'b-dn'}">${ok(avgDia)?'✓ Meta':'✗ Abaixo'}</span></div>
+    <div class="kpi ${pAcima>=50?'kpi-green':'kpi-red'}"><div class="kpi-l">Dias acima 70%</div><div class="kpi-v">${acima}</div><div class="kpi-l">${pAcima}% dos períodos</div></div>
+  `;
+}
+
+function fagRenderMain(d){
+  if(fagCMain)fagCMain.destroy();
+  const labels=d.map(x=>x.data.length===10?x.data.slice(5):x.data);
+  fagCMain=new Chart(document.getElementById('fag-chart-main'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'FAG AM',data:d.map(x=>x.am),borderColor:'#3483FA',backgroundColor:'rgba(52,131,250,0.06)',tension:0.3,fill:false,pointRadius:3,pointBackgroundColor:d.map(x=>x.am>=FAG_META?'#6FCF7F':'#F07070'),borderWidth:2},
+      {label:'FAG PM',data:d.map(x=>x.pm),borderColor:'#FFE600',backgroundColor:'rgba(255,230,0,0.05)',tension:0.3,fill:false,pointRadius:3,pointBackgroundColor:d.map(x=>x.pm>=FAG_META?'#6FCF7F':'#F07070'),borderWidth:2},
+      {label:'Média Dia',data:d.map(x=>x.dia),borderColor:'#6FCF7F',backgroundColor:'rgba(111,207,127,0.07)',tension:0.3,fill:true,pointRadius:3,borderWidth:2.5},
+      {label:'Meta (70%)',data:d.map(()=>FAG_META),borderColor:'rgba(240,112,112,0.6)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11},color:'#B0B0CC'},grid:{color:'rgba(255,255,255,0.05)'}},
+        x:{ticks:{font:{size:10},color:'#B0B0CC',maxRotation:45,autoSkip:true,maxTicksLimit:20},grid:{color:'rgba(255,255,255,0.03)'}}
+      }
+    }
+  });
+}
+
+function fagRenderBar(d){
+  if(fagCBar)fagCBar.destroy();
+  const labels=d.map(x=>x.data.length===10?x.data.slice(5):x.data);
+  fagCBar=new Chart(document.getElementById('fag-chart-bar'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'FAG AM',data:d.map(x=>x.am),backgroundColor:d.map(x=>x.am>=FAG_META?'#3483FA':'rgba(52,131,250,0.35)'),borderRadius:4,barPercentage:0.4},
+      {label:'FAG PM',data:d.map(x=>x.pm),backgroundColor:d.map(x=>x.pm>=FAG_META?'#FFE600':'rgba(255,230,0,0.35)'),borderRadius:4,barPercentage:0.4},
+      {label:'Meta',data:d.map(()=>FAG_META),type:'line',borderColor:'rgba(240,112,112,0.7)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#B0B0CC',font:{size:11},boxWidth:12,padding:14}}},
+      scales:{
+        y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11},color:'#B0B0CC'},grid:{color:'rgba(255,255,255,0.05)'}},
+        x:{ticks:{font:{size:10},color:'#B0B0CC',maxRotation:45,autoSkip:true,maxTicksLimit:15},grid:{color:'rgba(255,255,255,0.03)'}}
+      }
+    }
+  });
+}
+
+function fagRenderPizza(d){
+  if(fagCPizza)fagCPizza.destroy();
+  const acima=d.filter(x=>x.dia>=FAG_META).length;
+  const abaixo=d.length-acima;
+  const cores=['#6FCF7F','#F07070'];
+  document.getElementById('fag-leg-pizza').innerHTML=[
+    ['Acima 70% ('+acima+')',0],['Abaixo 70% ('+abaixo+')',1]
+  ].map(([l,i])=>`<span class="leg-item"><span class="leg-dot" style="background:${cores[i]}"></span>${l}</span>`).join('');
+  fagCPizza=new Chart(document.getElementById('fag-chart-pizza'),{
+    type:'doughnut',
+    data:{labels:['Acima meta','Abaixo meta'],datasets:[{data:[acima,abaixo],backgroundColor:cores,borderWidth:3,borderColor:'#2A2A42'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
+  });
+}
+
+function fagRenderTabela(d){
+  const rows=[...d].reverse().slice(0,25);
+  const bc=v=>v>=FAG_META?'#6FCF7F':'#F07070';
+  const pill=v=>v>=FAG_META?'<span class="pill p-ok">Acima</span>':'<span class="pill p-low">Abaixo</span>';
+  const diff=v=>{const dv=+(v-FAG_META).toFixed(1);return dv>=0?`<span style="color:#6FCF7F;font-weight:700">+${dv}%</span>`:`<span style="color:#F07070;font-weight:700">${dv}%</span>`;};
+  const showTurno=(v,has)=>has?`<span style="font-weight:700;color:${bc(v)}">${v}%</span>`:`<span style="color:var(--t3)">—</span>`;
+  document.getElementById('fag-tbody').innerHTML=rows.map(x=>`
+    <tr>
+      <td>${x.data.length===10?x.data.split('-').reverse().join('/'):x.data}</td>
+      <td>${showTurno(x.am,x.hasAM)}</td>
+      <td>${showTurno(x.pm,x.hasPM)}</td>
+      <td><span style="font-weight:700;color:${bc(x.dia)}">${x.dia}%</span></td>
+      <td>${diff(x.dia)}</td>
+      <td>${pill(x.dia)}</td>
+    </tr>`).join('');
+}
+
+function fagRender(){
+  const d=fagFiltrar();
+  const view=document.getElementById('fag-view').value;
+  const titles={diario:'FAG por dia — AM vs PM vs Média',semanal:'FAG por semana — AM vs PM vs Média',mensal:'FAG por mês — AM vs PM vs Média'};
+  document.getElementById('fag-chart-title').textContent=titles[view];
+  fagRenderKPIs(d);fagRenderMain(d);fagRenderBar(d);fagRenderPizza(d);fagRenderTabela(d);
+}
+
+function fagLimpar(){
+  document.getElementById('fag-ini').value='2026-05-24';
+  document.getElementById('fag-fim').value='2026-06-15';
+  document.getElementById('fag-view').value='diario';
+  fagRender();
+}
+
+</script>
 </body>
 </html>
