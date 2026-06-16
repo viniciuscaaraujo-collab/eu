@@ -3,244 +3,302 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — Auditoria de Carrinho SMG10</title>
+  <title>Painel Operacional — ML SMG10</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --ml-yellow: #FFE600;
-      --ml-yellow-dark: #C8A000;
-      --ml-blue: #2D3277;
-      --ml-blue-mid: #3483FA;
-      --ml-blue-light: #E8EBF8;
-      --bg: #1C1C2E;
-      --bg2: #23233A;
-      --surface: #2A2A42;
-      --surface2: #32324E;
-      --text: #F0F0F0;
-      --text2: #B0B0CC;
-      --text3: #707090;
-      --border: rgba(255,255,255,0.07);
-      --border2: rgba(255,255,255,0.15);
-      --radius: 6px;
-      --radius-lg: 12px;
-      --green-bg: #1A3A1E; --green-t: #6FCF7F;
-      --amber-bg: #3A2E10; --amber-t: #F0B855;
-      --red-bg:   #3A1A1A; --red-t:   #F07070;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+/* ══ RESET ══ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── TOPBAR ── */
-    .topbar {
-      background: linear-gradient(135deg, #FFE600 0%, #F0CC00 100%);
-      padding: 0 28px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.4);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .topbar-left { display: flex; align-items: center; gap: 20px; }
-    .topbar-divider { width: 1px; height: 28px; background: rgba(45,50,119,0.3); }
-    .topbar-title { font-size: 15px; font-weight: 700; color: #2D3277; letter-spacing: 0.01em; }
-    .facility-tag {
-      background: rgba(45,50,119,0.15);
-      color: #2D3277;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 10px;
-      border-radius: 999px;
-      letter-spacing: 0.06em;
-      border: 1px solid rgba(45,50,119,0.2);
-    }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-date { font-size: 12px; color: #2D3277; font-weight: 500; }
-    .topbar-badge {
-      background: #2D3277;
-      color: #FFE600;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 12px;
-      border-radius: 999px;
-      letter-spacing: 0.04em;
-    }
+/* ══ TOKENS ══ */
+:root {
+  --ml-yellow: #FFE600;
+  --ml-yellow-dark: #C8A000;
+  --ml-navy: #2D3277;
+  --ml-blue: #3483FA;
+  --bg: #1C1C2E;
+  --surface: #2A2A42;
+  --surface2: #32324E;
+  --text: #F0F0F0;
+  --text2: #B0B0CC;
+  --text3: #707090;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.18);
+  --radius: 6px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 10px rgba(0,0,0,0.4);
+  --green: #6FCF7F; --green-bg: #1A3A1E; --green-text: #6FCF7F;
+  --amber: #F0B855; --amber-bg: #3A2E10; --amber-text: #F0B855;
+  --red: #F07070;   --red-bg:   #3A1A1A; --red-text:   #F07070;
+  --blue2: rgba(52,131,250,0.12);
+}
 
-    /* ── CONTAINER ── */
-    .container { max-width: 1140px; margin: 0 auto; padding: 22px 16px 36px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
 
-    .breadcrumb {
-      font-size: 12px; color: var(--text3); margin-bottom: 14px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .breadcrumb a { color: var(--ml-yellow-dark); cursor: pointer; text-decoration: none; }
+/* ══ TOPBAR ══ */
+.topbar {
+  background: linear-gradient(135deg,#FFE600 0%,#F0CC00 100%);
+  padding: 0 24px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.45);
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+.topbar-left { display:flex; align-items:center; gap:16px; }
+.topbar-divider { width:1px; height:26px; background:rgba(45,50,119,0.3); }
+.topbar-title { font-size:15px; font-weight:700; color:#2D3277; letter-spacing:.01em; }
+.facility-tag { background:rgba(45,50,119,0.15); color:#2D3277; font-size:11px; font-weight:800; padding:3px 10px; border-radius:999px; border:1px solid rgba(45,50,119,0.2); }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.topbar-date { font-size:12px; color:#2D3277; font-weight:500; }
+.topbar-badge { background:#2D3277; color:#FFE600; font-size:11px; font-weight:800; padding:4px 12px; border-radius:999px; }
 
-    /* Meta banner */
-    .meta-banner {
-      background: linear-gradient(90deg, #1A3A1E, #1E3A2A);
-      border: 1px solid #2E6B3A;
-      border-radius: var(--radius);
-      padding: 10px 16px;
-      font-size: 12px;
-      color: var(--green-t);
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-    .meta-banner-dot { width: 8px; height: 8px; border-radius: 50%; background: #6FCF7F; display: inline-block; }
+/* ══ LAYOUT ══ */
+.app { display:flex; min-height:calc(100vh - 58px); }
 
-    /* ── FILTROS ── */
-    .filters {
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: var(--radius-lg);
-      padding: 14px 18px;
-      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .filter-label { font-size: 13px; color: var(--text2); font-weight: 600; white-space: nowrap; }
-    .filters select, .filters input[type=date] {
-      font-size: 13px; padding: 7px 11px;
-      border: 1px solid var(--border2);
-      border-radius: var(--radius);
-      background: var(--surface2); color: var(--text);
-      outline: none; transition: border-color 0.15s;
-    }
-    .filters select:focus, .filters input[type=date]:focus { border-color: var(--ml-yellow); }
-    .btn-ok {
-      background: var(--ml-yellow); color: #2D3277;
-      border: none; padding: 8px 20px; border-radius: var(--radius);
-      font-size: 13px; font-weight: 800; cursor: pointer; transition: opacity 0.15s;
-    }
-    .btn-ok:hover { opacity: 0.88; }
-    .btn-cl {
-      background: transparent; color: var(--ml-yellow);
-      border: 1px solid var(--ml-yellow); padding: 7px 14px;
-      border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer;
-    }
-    .btn-cl:hover { background: rgba(255,230,0,0.08); }
+/* ══ SIDEBAR ══ */
+.sidebar {
+  width: 224px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 18px 0 24px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 58px;
+  height: calc(100vh - 58px);
+  overflow-y: auto;
+}
+.sb-logo { padding:0 18px 18px; border-bottom:1px solid var(--border); margin-bottom:6px; }
+.sb-logo-title { font-size:14px; font-weight:700; color:var(--text); }
+.sb-logo-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+.sb-section {
+  margin:14px 12px 4px;
+  padding:5px 10px;
+  background:rgba(255,230,0,0.07);
+  border-radius:6px;
+  font-size:10px;
+  font-weight:800;
+  color:var(--ml-yellow);
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 18px; cursor:pointer;
+  font-size:13px; color:var(--text2);
+  border-left:3px solid transparent;
+  transition:all .12s; user-select:none;
+}
+.nav-item:hover { background:var(--surface2); color:var(--text); }
+.nav-item.active { color:var(--ml-yellow); background:rgba(255,230,0,0.07); border-left-color:var(--ml-yellow); font-weight:600; }
+.nav-icon { font-size:15px; flex-shrink:0; }
+.sb-footer { margin-top:auto; padding:14px 18px 0; border-top:1px solid var(--border); font-size:11px; color:var(--text3); line-height:1.7; }
 
-    /* ── KPIS ── */
-    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
-    .kpi {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-      border-top: 3px solid var(--ml-yellow);
-      position: relative;
-    }
-    .kpi.kpi-blue  { border-top-color: #3483FA; }
-    .kpi.kpi-green { border-top-color: #6FCF7F; }
-    .kpi.kpi-red   { border-top-color: #F07070; }
-    .kpi.kpi-amber { border-top-color: #F0B855; }
-    .kpi-l { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
-    .kpi-v { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 6px; }
-    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; }
-    .b-up { background: var(--green-bg); color: var(--green-t); }
-    .b-dn { background: var(--red-bg);   color: var(--red-t);   }
-    .b-am { background: var(--amber-bg); color: var(--amber-t); }
+/* ══ MAIN ══ */
+.main { flex:1; overflow-x:hidden; }
+.dashboard-panel { display:none; }
+.dashboard-panel.active { display:block; }
 
-    /* ── CARDS ── */
-    .row2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
-    @media(max-width:680px){ .row2 { grid-template-columns: 1fr; } }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    }
-    .card-t {
-      font-size: 12px; font-weight: 700; color: var(--text2);
-      margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .card-t-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .card-t-row span { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
-    .meta-chip {
-      background: var(--green-bg); color: var(--green-t);
-      font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;
-      border: 1px solid #2E6B3A;
-    }
+/* ══ SHARED CARDS / METRICS / TABLES (dark) ══ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+}
+.card-title { font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.card-sub { font-size:12px; color:var(--text3); margin-bottom:14px; }
 
-    /* Legenda */
-    .leg { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
-    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); font-weight: 500; }
-    .leg-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:20px; }
+.metric { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px 18px; box-shadow:var(--shadow); border-top:3px solid var(--ml-yellow); }
+.metric-label { font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+.metric-value { font-size:26px; font-weight:700; letter-spacing:-.5px; line-height:1; color:var(--text); }
+.metric-sub { font-size:11px; color:var(--text3); margin-top:4px; }
 
-    /* ── TABELA ── */
-    .table-wrap { overflow-x: auto; }
-    table.dtbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-    table.dtbl th {
-      text-align: left; font-weight: 700; color: var(--text2);
-      padding: 9px 12px; border-bottom: 2px solid rgba(255,230,0,0.4);
-      white-space: nowrap; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    table.dtbl td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
-    table.dtbl tr:last-child td { border-bottom: none; }
-    table.dtbl tr:hover td { background: var(--surface2); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px; }
 
-    .pill { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; }
-    .p-ok  { background: var(--green-bg); color: var(--green-t); }
-    .p-mid { background: var(--amber-bg); color: var(--amber-t); }
-    .p-low { background: var(--red-bg);   color: var(--red-t);   }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:8px 10px; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.05em; border-bottom:2px solid rgba(255,230,0,0.3); background:var(--surface2); white-space:nowrap; }
+td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--surface2); }
+.table-wrap { overflow-x:auto; }
 
-    .prog-wrap { background: rgba(255,255,255,0.1); border-radius: 999px; height: 6px; width: 70px; overflow: hidden; display: inline-block; vertical-align: middle; }
-    .prog-bar  { height: 6px; border-radius: 999px; }
+/* Badges */
+.badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.badge-g { background:var(--green-bg); color:var(--green-text); }
+.badge-r { background:var(--red-bg);   color:var(--red-text); }
+.badge-a { background:var(--amber-bg); color:var(--amber-text); }
+.badge-info { display:inline-flex; align-items:center; gap:5px; background:var(--blue2); color:var(--ml-blue); border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; }
 
-    footer {
-      text-align: center; font-size: 12px; color: var(--text3);
-      padding: 20px 0 14px; border-top: 1px solid var(--border); margin-top: 8px;
-    }
-    code { font-family: monospace; font-size: 12px; color: var(--ml-yellow-dark); }
+/* Progress bar */
+.bar-wrap { background:var(--surface2); border-radius:4px; height:7px; min-width:60px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width .3s; }
+
+/* Trend colors */
+.tu { color:var(--green); font-weight:600; }
+.td2 { color:var(--red); font-weight:600; }
+.te { color:var(--text3); }
+
+/* Date tabs */
+.date-tabs { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:14px; }
+.date-tab { padding:4px 11px; border-radius:20px; border:1px solid var(--border2); font-size:12px; cursor:pointer; background:transparent; color:var(--text2); transition:all .12s; }
+.date-tab:hover { border-color:var(--ml-yellow); color:var(--text); }
+.date-tab.active { background:var(--ml-yellow); color:#1a1a1a; border-color:var(--ml-yellow); font-weight:700; }
+
+/* Selects */
+select { padding:7px 11px; font-size:13px; border-radius:var(--radius); border:1px solid var(--border2); background:var(--surface2); color:var(--text); cursor:pointer; outline:none; }
+select:focus { border-color:var(--ml-yellow); }
+
+/* Legend */
+.legend { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:12px; font-size:12px; color:var(--text2); }
+.legend span { display:flex; align-items:center; gap:6px; }
+.ld { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+
+/* Chart wrap */
+.chart-wrap { position:relative; }
+
+/* Page header */
+.page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+.page-title { font-size:22px; font-weight:700; letter-spacing:-.4px; color:var(--text); }
+.page-sub { font-size:13px; color:var(--text2); margin-top:3px; }
+
+/* Views prod */
+.view { display:none; }
+.view.active { display:block; }
+
+/* ══ AUDITORIA-SPECIFIC ══ */
+.container { max-width:1100px; padding:22px 24px 36px; }
+.filters {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:var(--radius-lg); padding:14px 18px;
+  display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+  margin-bottom:18px; box-shadow:var(--shadow);
+}
+.filter-label { font-size:13px; color:var(--text2); font-weight:600; white-space:nowrap; }
+.filters input[type=date] { font-size:13px; padding:7px 11px; border:1px solid var(--border2); border-radius:var(--radius); background:var(--surface2); color:var(--text); outline:none; }
+.filters input[type=date]:focus { border-color:var(--ml-yellow); }
+.btn-ok { background:var(--ml-yellow); color:#2D3277; border:none; padding:8px 20px; border-radius:var(--radius); font-size:13px; font-weight:800; cursor:pointer; transition:opacity .15s; }
+.btn-ok:hover { opacity:.85; }
+.btn-cl { background:transparent; color:var(--ml-yellow); border:1px solid var(--ml-yellow); padding:7px 14px; border-radius:var(--radius); font-size:13px; font-weight:600; cursor:pointer; }
+.btn-cl:hover { background:rgba(255,230,0,0.08); }
+
+.kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:18px; }
+.kpi { background:var(--surface); border-radius:var(--radius-lg); padding:16px 18px; box-shadow:var(--shadow); border-top:3px solid var(--ml-yellow); }
+.kpi.kpi-blue  { border-top-color:var(--ml-blue); }
+.kpi.kpi-green { border-top-color:var(--green); }
+.kpi.kpi-red   { border-top-color:var(--red); }
+.kpi.kpi-amber { border-top-color:var(--amber); }
+.kpi-l { font-size:12px; color:var(--text2); margin-bottom:5px; font-weight:500; }
+.kpi-v { font-size:28px; font-weight:700; color:var(--text); line-height:1; margin-bottom:5px; }
+.badge-kpi { display:inline-block; font-size:11px; padding:2px 8px; border-radius:999px; font-weight:700; }
+.b-up { background:var(--green-bg); color:var(--green-text); }
+.b-dn { background:var(--red-bg);   color:var(--red-text); }
+.b-am { background:var(--amber-bg); color:var(--amber-text); }
+
+.row2 { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:16px; }
+.card-t { font-size:12px; font-weight:700; color:var(--text2); margin-bottom:14px; text-transform:uppercase; letter-spacing:.06em; }
+.card-t-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.card-t-row span { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; }
+.meta-chip { background:var(--green-bg); color:var(--green-text); font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px; border:1px solid #2E6B3A; }
+.meta-banner { background:var(--green-bg); border:1px solid #2E6B3A; border-radius:var(--radius); padding:10px 16px; font-size:12px; color:var(--green-text); font-weight:600; display:inline-flex; align-items:center; gap:8px; margin-bottom:18px; }
+.meta-banner-dot { width:8px; height:8px; border-radius:50%; background:var(--green); display:inline-block; }
+.leg { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+.leg-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text2); font-weight:500; }
+.leg-dot { width:10px; height:10px; border-radius:3px; display:inline-block; }
+.pill { display:inline-block; font-size:11px; padding:3px 10px; border-radius:999px; font-weight:700; }
+.p-ok  { background:var(--green-bg); color:var(--green-text); }
+.p-mid { background:var(--amber-bg); color:var(--amber-text); }
+.p-low { background:var(--red-bg);   color:var(--red-text); }
+.prog-wrap { background:rgba(255,255,255,0.08); border-radius:999px; height:6px; width:70px; overflow:hidden; display:inline-block; vertical-align:middle; }
+.prog-bar { height:6px; border-radius:999px; }
+.breadcrumb { font-size:12px; color:var(--text3); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+.breadcrumb a { color:var(--ml-yellow-dark); cursor:pointer; text-decoration:none; }
+
+code { font-family:monospace; font-size:12px; color:var(--ml-yellow); }
+
+footer { text-align:center; font-size:12px; color:var(--text3); padding:20px 0 14px; border-top:1px solid var(--border); margin-top:8px; }
+
+/* Responsive */
+@media(max-width:700px) {
+  .sidebar { display:none; }
+  .container { padding:14px; }
+  .two-col { grid-template-columns:1fr; }
+  .row2 { grid-template-columns:1fr; }
+}
   </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <!-- Logo Mercado Livre SVG fiel à marca -->
-    <svg width="160" height="40" viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg">
-      <!-- Elipse fundo laranja/dourado -->
-      <ellipse cx="22" cy="20" rx="20" ry="14" fill="#F0A500" stroke="#2D3277" stroke-width="1.8"/>
-      <!-- Elipse branca interna (aperto de mão) -->
-      <ellipse cx="22" cy="20" rx="15" ry="10" fill="white"/>
-      <!-- Mão esquerda simplificada -->
-      <path d="M10 22 C11 18, 14 16, 17 18 L20 20 L17 22 C14 24, 11 24, 10 22Z" fill="white" stroke="#2D3277" stroke-width="1.2"/>
-      <!-- Mão direita simplificada -->
-      <path d="M34 18 C33 22, 30 24, 27 22 L24 20 L27 18 C30 16, 33 16, 34 18Z" fill="white" stroke="#2D3277" stroke-width="1.2"/>
-      <!-- Dedos mão esquerda -->
-      <path d="M15 17 C15 15, 17 14, 18 16" stroke="#2D3277" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-      <path d="M17 16 C17 14, 19 13, 20 15" stroke="#2D3277" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-      <path d="M19 15.5 C19 13.5, 21 13, 22 14.5" stroke="#2D3277" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-      <!-- Contorno elipse externa -->
-      <ellipse cx="22" cy="20" rx="20" ry="14" fill="none" stroke="#2D3277" stroke-width="1.8"/>
-      <!-- Texto "mercado" -->
-      <text x="48" y="18" font-family="Arial, sans-serif" font-weight="800" font-size="12" fill="#2D3277" letter-spacing="-0.3">mercado</text>
-      <!-- Texto "livre" -->
-      <text x="48" y="33" font-family="Arial, sans-serif" font-weight="800" font-size="12" fill="#2D3277" letter-spacing="-0.3">livre</text>
+    <svg width="150" height="38" viewBox="0 0 150 38" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="20" cy="19" rx="18" ry="13" fill="#F0A500" stroke="#2D3277" stroke-width="1.6"/>
+      <ellipse cx="20" cy="19" rx="13" ry="9" fill="white"/>
+      <path d="M9 21 C10 17,13 15,16 17 L18 19 L16 21 C13 23,10 23,9 21Z" fill="white" stroke="#2D3277" stroke-width="1.1"/>
+      <path d="M31 17 C30 21,27 23,24 21 L22 19 L24 17 C27 15,30 15,31 17Z" fill="white" stroke="#2D3277" stroke-width="1.1"/>
+      <path d="M14 16 C14 14,16 13,17 15" stroke="#2D3277" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <path d="M16 15 C16 13,18 12,19 14" stroke="#2D3277" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <ellipse cx="20" cy="19" rx="18" ry="13" fill="none" stroke="#2D3277" stroke-width="1.6"/>
+      <text x="44" y="17" font-family="Arial" font-weight="800" font-size="11" fill="#2D3277">mercado</text>
+      <text x="44" y="31" font-family="Arial" font-weight="800" font-size="11" fill="#2D3277">livre</text>
     </svg>
-
     <div class="topbar-divider"></div>
-    <span class="topbar-title">Auditoria de Carrinho</span>
+    <span class="topbar-title">Painel Operacional</span>
     <span class="facility-tag">SMG10</span>
   </div>
   <div class="topbar-right">
-    <span class="topbar-date" id="dt"></span>
+    <span class="topbar-date" id="dt-top"></span>
     <span class="topbar-badge">MLB</span>
   </div>
 </div>
 
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-title">📦 SMG10</div>
+      <div class="sb-logo-sub">Painel Operacional 2026</div>
+    </div>
+
+    <div class="sb-section">🛒 Auditoria</div>
+    <div class="nav-item active" id="nav-auditoria" onclick="switchPanel('auditoria')">
+      <span class="nav-icon">📊</span>Auditoria Carrinho
+    </div>
+
+    <div class="sb-section">⚡ Produtividade</div>
+    <div class="nav-item" id="nav-geral"      onclick="switchPanel('prod');setView('geral')"><span class="nav-icon">📈</span>Visão geral</div>
+    <div class="nav-item" id="nav-sorting"    onclick="switchPanel('prod');setView('sorting')"><span class="nav-icon">🔀</span>Sorting</div>
+    <div class="nav-item" id="nav-labeling"   onclick="switchPanel('prod');setView('labeling')"><span class="nav-icon">🏷️</span>Labeling</div>
+    <div class="nav-item" id="nav-historico"  onclick="switchPanel('prod');setView('historico')"><span class="nav-icon">📅</span>Histórico</div>
+    <div class="nav-item" id="nav-individual" onclick="switchPanel('prod');setView('individual')"><span class="nav-icon">👤</span>Individual</div>
+    <div class="nav-item" id="nav-pessoal"    onclick="switchPanel('prod');setView('pessoal')"><span class="nav-icon">⚡</span>Efic. pessoal</div>
+
+    <div class="sb-footer">
+      Base: 14/05 a 15/06/2026<br>
+      Produtividade: média 3h<br>
+      Auditoria: % rotas sem CA
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ═══ AUDITORIA ═══ -->
+    <div id="panel-auditoria" class="dashboard-panel active">
 <div class="container">
 
   <div class="breadcrumb">
@@ -418,5 +476,709 @@ function limpar(){
 }
 renderAll();
 </script>
+
+    </div>
+
+    <!-- ═══ PRODUTIVIDADE ═══ -->
+    <div id="panel-prod" class="dashboard-panel">
+<main class="main">
+
+    <!-- VISÃO GERAL -->
+    <div id="v-geral" class="view active">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Visão geral</div>
+          <div class="page-sub">14/05 a 15/06/2026 · 32 dias registrados</div>
+        </div>
+        <div class="badge-info">📊 Eficiência = média 3h ÷ target</div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Efic. sorting</div><div class="metric-value" id="g-se" style="color:var(--green)">—</div><div class="metric-sub">target 300 un/h</div></div>
+        <div class="metric"><div class="metric-label">Efic. labeling</div><div class="metric-value" id="g-le" style="color:var(--green)">—</div><div class="metric-sub">target 1.100 un/h · esteira</div></div>
+        <div class="metric"><div class="metric-label">Efic. geral</div><div class="metric-value" id="g-te">—</div><div class="metric-sub">média das operações</div></div>
+        <div class="metric"><div class="metric-label">Dias registrados</div><div class="metric-value">32</div><div class="metric-sub">14/05 a 15/06</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Eficiência diária — sorting e labeling</div>
+        <div class="card-sub">Produção média diária da equipe vs target · Sorting (eixo esq.) · Labeling (eixo dir.)</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#2B6CB0"></span>Sorting (média diária)</span>
+          <span><span class="ld" style="background:#2B6CB0;opacity:.4"></span>Target sorting (300)</span>
+          <span><span class="ld" style="background:#1A8C5F"></span>Labeling esteira (média diária)</span>
+          <span><span class="ld" style="background:#1A8C5F;opacity:.4"></span>Target labeling (1.100)</span>
+        </div>
+        <div class="chart-wrap" style="height:220px"><canvas id="cGeral"></canvas></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">🏆 Top 5 — Sorting</div>
+          <div class="card-sub">Maior média diária no período (mín. 3 dias)</div>
+          <table><thead><tr><th>#</th><th>Colaborador</th><th>Média/dia</th><th>Efic.</th></tr></thead>
+          <tbody id="t-top-s"></tbody></table>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 Top 5 — Labeling</div>
+          <div class="card-sub">Maior média diária no período (mín. 2 dias)</div>
+          <table><thead><tr><th>#</th><th>Colaborador</th><th>Média/dia</th><th>Efic.</th></tr></thead>
+          <tbody id="t-top-l"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SORTING -->
+    <div id="v-sorting" class="view">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Sorting</div>
+          <div class="page-sub">Resultado do dia completo por colaborador · Target: 300 un/h</div>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Target/hora</div><div class="metric-value">300</div><div class="metric-sub">unidades</div></div>
+        <div class="metric"><div class="metric-label">Média período</div><div class="metric-value" id="s-med">—</div><div class="metric-sub" id="s-med-e"></div></div>
+        <div class="metric"><div class="metric-label">Dias ≥ 100% efic.</div><div class="metric-value" id="s-dias-ac">—</div><div class="metric-sub">de 31 dias (base 3h)</div></div>
+        <div class="metric"><div class="metric-label">Melhor dia</div><div class="metric-value" id="s-best" style="color:var(--green)">—</div><div class="metric-sub" id="s-best-d"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Desempenho individual — sorting</div>
+        <div class="card-sub">Selecione um dia para ver os resultados</div>
+        <div class="date-tabs" id="ht-s"></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Colaborador</th><th>Prod. dia</th><th>Eficiência</th><th style="min-width:100px">Progresso</th><th>Status</th></tr></thead>
+          <tbody id="tb-s"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LABELING -->
+    <div id="v-labeling" class="view">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Labeling — Esteira</div>
+          <div class="page-sub">Resultado do dia completo por colaborador · Target: 1.100 un/h</div>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Target/hora</div><div class="metric-value">1.100</div><div class="metric-sub">unidades (esteira)</div></div>
+        <div class="metric"><div class="metric-label">Média período</div><div class="metric-value" id="l-med">—</div><div class="metric-sub" id="l-med-e"></div></div>
+        <div class="metric"><div class="metric-label">Dias ≥ 100% efic.</div><div class="metric-value" id="l-dias-ac">—</div><div class="metric-sub">de 31 dias (base 3h)</div></div>
+        <div class="metric"><div class="metric-label">Melhor dia</div><div class="metric-value" id="l-best" style="color:var(--green)">—</div><div class="metric-sub" id="l-best-d"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Desempenho individual — labeling esteira</div>
+        <div class="card-sub">Selecione um dia para ver os resultados</div>
+        <div class="date-tabs" id="ht-l"></div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Colaborador</th><th>Prod. dia</th><th>Eficiência</th><th style="min-width:100px">Progresso</th><th>Status</th></tr></thead>
+          <tbody id="tb-l"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="v-historico" class="view">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Histórico diário</div>
+          <div class="page-sub">Eficiência por dia — base: média 3h de processamento</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Evolução da eficiência</div>
+        <div class="card-sub">Sorting e labeling ao longo do período</div>
+        <div class="chart-wrap" style="height:200px; margin-bottom:20px"><canvas id="cHist"></canvas></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Data</th><th>Efic. sorting</th><th>Colaboradores S</th>
+              <th>Efic. labeling</th><th>Colaboradores L</th>
+              <th>Efic. geral</th><th>Tendência</th>
+            </tr></thead>
+            <tbody id="tb-hist"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- INDIVIDUAL -->
+    <div id="v-individual" class="view">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Histórico individual</div>
+          <div class="page-sub">Produção do dia completo por colaborador</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Selecione o colaborador</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <select id="sel-op" onchange="updatePersonList()">
+            <option value="sorting">Sorting</option>
+            <option value="labeling">Labeling</option>
+          </select>
+          <select id="sel-person" onchange="buildPersonChart()" style="min-width:220px">
+            <option value="">Selecione um colaborador</option>
+          </select>
+        </div>
+        <div class="chart-wrap" style="height:200px; margin-bottom:20px"><canvas id="cPerson"></canvas></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>Produção</th><th>Eficiência</th><th>Status</th></tr></thead>
+            <tbody id="tb-person"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- EFICIÊNCIA PESSOAL -->
+    <div id="v-pessoal" class="view">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Eficiência pessoal</div>
+          <div class="page-sub">Histórico de dias e de horários por colaborador</div>
+        </div>
+      </div>
+
+      <!-- Seletor -->
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select id="ep-op" onchange="epUpdatePeople()" style="padding:6px 10px;font-size:13px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text)">
+            <option value="sorting">Sorting</option>
+            <option value="labeling">Labeling</option>
+          </select>
+          <select id="ep-person" onchange="epRender()" style="min-width:240px;padding:6px 10px;font-size:13px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text)">
+            <option value="">Selecione um colaborador</option>
+          </select>
+          <div id="ep-info" style="font-size:12px;color:var(--text3)"></div>
+        </div>
+      </div>
+
+      <!-- KPIs pessoais -->
+      <div class="metrics" id="ep-metrics" style="display:none">
+        <div class="metric"><div class="metric-label">Dias trabalhados</div><div class="metric-value" id="ep-dias">—</div><div class="metric-sub">no período</div></div>
+        <div class="metric"><div class="metric-label">Média diária</div><div class="metric-value" id="ep-med">—</div><div class="metric-sub" id="ep-med-e"></div></div>
+        <div class="metric"><div class="metric-label">Melhor dia</div><div class="metric-value" id="ep-best" style="color:var(--green)">—</div><div class="metric-sub" id="ep-best-d"></div></div>
+        <div class="metric"><div class="metric-label">Dias acima target</div><div class="metric-value" id="ep-ac" style="color:var(--green)">—</div><div class="metric-sub" id="ep-ac-p"></div></div>
+      </div>
+
+      <!-- Gráfico histórico de dias -->
+      <div class="card" id="ep-card-days" style="display:none">
+        <div class="card-title" id="ep-title-days">Histórico diário</div>
+        <div class="card-sub">Produção do dia vs target</div>
+        <div class="legend">
+          <span><span class="ld" style="background:#2B6CB0"></span>Produção</span>
+          <span><span class="ld" style="background:#CECECA"></span>Target</span>
+        </div>
+        <div class="chart-wrap" style="height:200px"><canvas id="ep-chart-days"></canvas></div>
+      </div>
+
+      <!-- Gráfico de horários (todos os dias empilhados) -->
+      <div class="card" id="ep-card-hours" style="display:none">
+        <div class="card-title" id="ep-title-hours">Desempenho por horário</div>
+        <div class="card-sub">Produção média em cada faixa horária — todos os dias disponíveis</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="ep-chart-hours"></canvas></div>
+      </div>
+
+      <!-- Tabela de dias -->
+      <div class="card" id="ep-card-table" style="display:none">
+        <div class="card-title">Detalhe diário — horários e resultado</div>
+        <div class="card-sub">Expanda cada dia para ver a produção por horário</div>
+        <div id="ep-day-list"></div>
+      </div>
+    </div>
+
+  </main>
+    </div>
+
+  </main>
+</div>
+
+<script>
+document.getElementById('dt-top').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+
+const ALL_NAV = ['auditoria','geral','sorting','labeling','historico','individual','pessoal'];
+
+function setActiveNav(ids) {
+  ALL_NAV.forEach(id => {
+    const el = document.getElementById('nav-'+id);
+    if (el) el.classList.toggle('active', ids.includes(id));
+  });
+}
+
+function switchPanel(name) {
+  document.querySelectorAll('.dashboard-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if (name === 'auditoria') { setActiveNav(['auditoria']); renderAll(); }
+  if (name === 'prod')      { setActiveNav(['geral']); buildGeral(); }
+}
+</script>
+
+<script>
+// ═══ AUDITORIA ═══
+
+const META = 40;
+document.getElementById('dt').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+
+const DADOS = [{"data":"2026-01-02","site":"MLB","facility":"SMG10","pct":51.6},{"data":"2026-01-03","site":"MLB","facility":"SMG10","pct":66.7},{"data":"2026-01-04","site":"MLB","facility":"SMG10","pct":24.0},{"data":"2026-01-05","site":"MLB","facility":"SMG10","pct":40.4},{"data":"2026-01-06","site":"MLB","facility":"SMG10","pct":54.8},{"data":"2026-01-07","site":"MLB","facility":"SMG10","pct":56.0},{"data":"2026-01-08","site":"MLB","facility":"SMG10","pct":32.0},{"data":"2026-01-09","site":"MLB","facility":"SMG10","pct":37.3},{"data":"2026-01-10","site":"MLB","facility":"SMG10","pct":72.7},{"data":"2026-01-11","site":"MLB","facility":"SMG10","pct":14.8},{"data":"2026-01-12","site":"MLB","facility":"SMG10","pct":41.7},{"data":"2026-01-13","site":"MLB","facility":"SMG10","pct":58.3},{"data":"2026-01-14","site":"MLB","facility":"SMG10","pct":74.2},{"data":"2026-01-15","site":"MLB","facility":"SMG10","pct":52.9},{"data":"2026-01-16","site":"MLB","facility":"SMG10","pct":26.7},{"data":"2026-01-17","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-01-18","site":"MLB","facility":"SMG10","pct":23.3},{"data":"2026-01-19","site":"MLB","facility":"SMG10","pct":57.5},{"data":"2026-01-20","site":"MLB","facility":"SMG10","pct":39.1},{"data":"2026-01-21","site":"MLB","facility":"SMG10","pct":46.9},{"data":"2026-01-22","site":"MLB","facility":"SMG10","pct":51.6},{"data":"2026-01-23","site":"MLB","facility":"SMG10","pct":57.1},{"data":"2026-01-24","site":"MLB","facility":"SMG10","pct":34.8},{"data":"2026-01-25","site":"MLB","facility":"SMG10","pct":44.0},{"data":"2026-01-26","site":"MLB","facility":"SMG10","pct":36.2},{"data":"2026-01-27","site":"MLB","facility":"SMG10","pct":37.8},{"data":"2026-01-28","site":"MLB","facility":"SMG10","pct":53.8},{"data":"2026-01-29","site":"MLB","facility":"SMG10","pct":40.0},{"data":"2026-01-30","site":"MLB","facility":"SMG10","pct":44.4},{"data":"2026-01-31","site":"MLB","facility":"SMG10","pct":37.0},{"data":"2026-02-01","site":"MLB","facility":"SMG10","pct":16.7},{"data":"2026-02-02","site":"MLB","facility":"SMG10","pct":32.4},{"data":"2026-02-03","site":"MLB","facility":"SMG10","pct":30.0},{"data":"2026-02-04","site":"MLB","facility":"SMG10","pct":38.3},{"data":"2026-02-05","site":"MLB","facility":"SMG10","pct":37.9},{"data":"2026-02-06","site":"MLB","facility":"SMG10","pct":56.8},{"data":"2026-02-07","site":"MLB","facility":"SMG10","pct":36.8},{"data":"2026-02-08","site":"MLB","facility":"SMG10","pct":12.4},{"data":"2026-02-09","site":"MLB","facility":"SMG10","pct":32.7},{"data":"2026-02-10","site":"MLB","facility":"SMG10","pct":26.7},{"data":"2026-02-11","site":"MLB","facility":"SMG10","pct":37.3},{"data":"2026-02-12","site":"MLB","facility":"SMG10","pct":35.8},{"data":"2026-02-13","site":"MLB","facility":"SMG10","pct":40.4},{"data":"2026-02-14","site":"MLB","facility":"SMG10","pct":37.7},{"data":"2026-02-15","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-02-16","site":"MLB","facility":"SMG10","pct":11.8},{"data":"2026-02-17","site":"MLB","facility":"SMG10","pct":10.4},{"data":"2026-02-18","site":"MLB","facility":"SMG10","pct":16.5},{"data":"2026-02-19","site":"MLB","facility":"SMG10","pct":11.0},{"data":"2026-02-20","site":"MLB","facility":"SMG10","pct":15.0},{"data":"2026-02-21","site":"MLB","facility":"SMG10","pct":37.3},{"data":"2026-02-22","site":"MLB","facility":"SMG10","pct":2.9},{"data":"2026-02-23","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-02-24","site":"MLB","facility":"SMG10","pct":1.3},{"data":"2026-02-25","site":"MLB","facility":"SMG10","pct":9.0},{"data":"2026-02-26","site":"MLB","facility":"SMG10","pct":0.9},{"data":"2026-02-27","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-02-28","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-01","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-02","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-03","site":"MLB","facility":"SMG10","pct":3.1},{"data":"2026-03-04","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-05","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-06","site":"MLB","facility":"SMG10","pct":5.3},{"data":"2026-03-07","site":"MLB","facility":"SMG10","pct":9.3},{"data":"2026-03-08","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-09","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-10","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-11","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-03-12","site":"MLB","facility":"SMG10","pct":8.8},{"data":"2026-03-13","site":"MLB","facility":"SMG10","pct":26.5},{"data":"2026-03-14","site":"MLB","facility":"SMG10","pct":1.1},{"data":"2026-03-15","site":"MLB","facility":"SMG10","pct":9.1},{"data":"2026-03-16","site":"MLB","facility":"SMG10","pct":1.2},{"data":"2026-03-17","site":"MLB","facility":"SMG10","pct":2.2},{"data":"2026-03-18","site":"MLB","facility":"SMG10","pct":14.3},{"data":"2026-03-19","site":"MLB","facility":"SMG10","pct":6.0},{"data":"2026-03-20","site":"MLB","facility":"SMG10","pct":31.4},{"data":"2026-03-21","site":"MLB","facility":"SMG10","pct":44.4},{"data":"2026-03-22","site":"MLB","facility":"SMG10","pct":9.3},{"data":"2026-03-23","site":"MLB","facility":"SMG10","pct":6.2},{"data":"2026-03-24","site":"MLB","facility":"SMG10","pct":18.2},{"data":"2026-03-25","site":"MLB","facility":"SMG10","pct":16.9},{"data":"2026-03-26","site":"MLB","facility":"SMG10","pct":25.6},{"data":"2026-03-27","site":"MLB","facility":"SMG10","pct":54.5},{"data":"2026-03-28","site":"MLB","facility":"SMG10","pct":51.4},{"data":"2026-03-29","site":"MLB","facility":"SMG10","pct":10.7},{"data":"2026-03-30","site":"MLB","facility":"SMG10","pct":14.9},{"data":"2026-03-31","site":"MLB","facility":"SMG10","pct":48.8},{"data":"2026-04-01","site":"MLB","facility":"SMG10","pct":53.7},{"data":"2026-04-02","site":"MLB","facility":"SMG10","pct":38.2},{"data":"2026-04-03","site":"MLB","facility":"SMG10","pct":26.7},{"data":"2026-04-04","site":"MLB","facility":"SMG10","pct":34.5},{"data":"2026-04-05","site":"MLB","facility":"SMG10","pct":3.6},{"data":"2026-04-06","site":"MLB","facility":"SMG10","pct":20.7},{"data":"2026-04-07","site":"MLB","facility":"SMG10","pct":51.5},{"data":"2026-04-08","site":"MLB","facility":"SMG10","pct":53.3},{"data":"2026-04-09","site":"MLB","facility":"SMG10","pct":60.0},{"data":"2026-04-10","site":"MLB","facility":"SMG10","pct":52.0},{"data":"2026-04-11","site":"MLB","facility":"SMG10","pct":48.3},{"data":"2026-04-12","site":"MLB","facility":"SMG10","pct":44.1},{"data":"2026-04-13","site":"MLB","facility":"SMG10","pct":53.1},{"data":"2026-04-14","site":"MLB","facility":"SMG10","pct":81.8},{"data":"2026-04-15","site":"MLB","facility":"SMG10","pct":55.0},{"data":"2026-04-16","site":"MLB","facility":"SMG10","pct":40.7},{"data":"2026-04-17","site":"MLB","facility":"SMG10","pct":30.0},{"data":"2026-04-18","site":"MLB","facility":"SMG10","pct":52.2},{"data":"2026-04-19","site":"MLB","facility":"SMG10","pct":60.0},{"data":"2026-04-20","site":"MLB","facility":"SMG10","pct":13.3},{"data":"2026-04-21","site":"MLB","facility":"SMG10","pct":45.5},{"data":"2026-04-22","site":"MLB","facility":"SMG10","pct":25.5},{"data":"2026-04-23","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-04-24","site":"MLB","facility":"SMG10","pct":68.4},{"data":"2026-04-25","site":"MLB","facility":"SMG10","pct":37.5},{"data":"2026-04-26","site":"MLB","facility":"SMG10","pct":28.6},{"data":"2026-04-27","site":"MLB","facility":"SMG10","pct":12.8},{"data":"2026-04-28","site":"MLB","facility":"SMG10","pct":42.3},{"data":"2026-04-29","site":"MLB","facility":"SMG10","pct":35.0},{"data":"2026-04-30","site":"MLB","facility":"SMG10","pct":40.6},{"data":"2026-05-01","site":"MLB","facility":"SMG10","pct":35.9},{"data":"2026-05-02","site":"MLB","facility":"SMG10","pct":12.6},{"data":"2026-05-03","site":"MLB","facility":"SMG10","pct":3.1},{"data":"2026-05-04","site":"MLB","facility":"SMG10","pct":13.2},{"data":"2026-05-05","site":"MLB","facility":"SMG10","pct":56.0},{"data":"2026-05-06","site":"MLB","facility":"SMG10","pct":20.0},{"data":"2026-05-07","site":"MLB","facility":"SMG10","pct":56.5},{"data":"2026-05-08","site":"MLB","facility":"SMG10","pct":34.8},{"data":"2026-05-09","site":"MLB","facility":"SMG10","pct":36.0},{"data":"2026-05-10","site":"MLB","facility":"SMG10","pct":13.6},{"data":"2026-05-11","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-05-12","site":"MLB","facility":"SMG10","pct":12.3},{"data":"2026-05-13","site":"MLB","facility":"SMG10","pct":6.5},{"data":"2026-05-14","site":"MLB","facility":"SMG10","pct":10.2},{"data":"2026-05-15","site":"MLB","facility":"SMG10","pct":8.8},{"data":"2026-05-16","site":"MLB","facility":"SMG10","pct":4.2},{"data":"2026-05-17","site":"MLB","facility":"SMG10","pct":9.1},{"data":"2026-05-18","site":"MLB","facility":"SMG10","pct":7.9},{"data":"2026-05-19","site":"MLB","facility":"SMG10","pct":9.1},{"data":"2026-05-20","site":"MLB","facility":"SMG10","pct":15.5},{"data":"2026-05-21","site":"MLB","facility":"SMG10","pct":18.9},{"data":"2026-05-22","site":"MLB","facility":"SMG10","pct":36.6},{"data":"2026-05-23","site":"MLB","facility":"SMG10","pct":30.8},{"data":"2026-05-24","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-05-25","site":"MLB","facility":"SMG10","pct":8.9},{"data":"2026-05-26","site":"MLB","facility":"SMG10","pct":28.1},{"data":"2026-05-27","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-05-28","site":"MLB","facility":"SMG10","pct":26.0},{"data":"2026-05-29","site":"MLB","facility":"SMG10","pct":28.9},{"data":"2026-05-30","site":"MLB","facility":"SMG10","pct":51.5},{"data":"2026-05-31","site":"MLB","facility":"SMG10","pct":12.0},{"data":"2026-06-01","site":"MLB","facility":"SMG10","pct":20.5},{"data":"2026-06-02","site":"MLB","facility":"SMG10","pct":20.6},{"data":"2026-06-03","site":"MLB","facility":"SMG10","pct":18.2},{"data":"2026-06-04","site":"MLB","facility":"SMG10","pct":13.1},{"data":"2026-06-05","site":"MLB","facility":"SMG10","pct":28.2},{"data":"2026-06-06","site":"MLB","facility":"SMG10","pct":38.7},{"data":"2026-06-07","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-06-08","site":"MLB","facility":"SMG10","pct":15.2},{"data":"2026-06-09","site":"MLB","facility":"SMG10","pct":26.3},{"data":"2026-06-10","site":"MLB","facility":"SMG10","pct":51.4},{"data":"2026-06-11","site":"MLB","facility":"SMG10","pct":37.0},{"data":"2026-06-12","site":"MLB","facility":"SMG10","pct":50.0},{"data":"2026-06-13","site":"MLB","facility":"SMG10","pct":37.8},{"data":"2026-06-14","site":"MLB","facility":"SMG10","pct":0.0},{"data":"2026-06-15","site":"MLB","facility":"SMG10","pct":32.0}];
+
+let cL,cP,cB;
+function perf(p){return p>=META?'alto':p>=20?'medio':'baixo';}
+
+function filtrar(){
+  const ini=document.getElementById('f-ini').value,fim=document.getElementById('f-fim').value;
+  const mes=document.getElementById('f-mes').value,pf=document.getElementById('f-perf').value;
+  return DADOS.filter(d=>(!ini||d.data>=ini)&&(!fim||d.data<=fim)&&(!mes||d.data.startsWith(mes))&&(!pf||perf(d.pct)===pf));
+}
+
+function renderKPIs(d){
+  const n=d.length,med=n?+(d.reduce((s,x)=>s+x.pct,0)/n).toFixed(1):0;
+  const max=n?Math.max(...d.map(x=>x.pct)):0,min=n?Math.min(...d.map(x=>x.pct)):0;
+  const acima=d.filter(x=>x.pct>=META).length,pAcima=n?Math.round(acima/n*100):0;
+  const ok=med>=META;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi kpi-blue"><div class="kpi-l">Dias analisados</div><div class="kpi-v">${n}</div><div class="kpi-l">no período</div></div>
+    <div class="kpi ${ok?'kpi-green':'kpi-red'}"><div class="kpi-l">Média de auditoria</div><div class="kpi-v">${med}%</div><span class="badge ${ok?'b-up':'b-dn'}">${ok?'✓ Acima da meta':'✗ Abaixo da meta'}</span></div>
+    <div class="kpi kpi-green"><div class="kpi-l">Máximo registrado</div><div class="kpi-v">${max}%</div><span class="badge b-up">melhor dia</span></div>
+    <div class="kpi kpi-amber"><div class="kpi-l">Mínimo registrado</div><div class="kpi-v">${min}%</div><span class="badge ${min>0?'b-am':'b-dn'}">${min>0?'acima de zero':'zero'}</span></div>
+    <div class="kpi ${pAcima>=50?'kpi-green':'kpi-red'}"><div class="kpi-l">Dias acima de ${META}%</div><div class="kpi-v">${acima}</div><div class="kpi-l">${pAcima}% dos dias</div></div>`;
+}
+
+function renderLinha(d){
+  if(cL)cL.destroy();
+  const labels=d.map(x=>x.data.slice(5)),vals=d.map(x=>x.pct),metaLine=vals.map(()=>META);
+  cL=new Chart(document.getElementById('cLinha'),{type:'line',data:{labels,datasets:[
+    {label:'% Auditoria',data:vals,borderColor:'#FFE600',backgroundColor:'rgba(255,230,0,0.07)',tension:0.3,fill:true,pointRadius:3,pointBackgroundColor:vals.map(v=>v>=META?'#6FCF7F':v>=20?'#F0B855':'#F07070'),pointBorderColor:'transparent',borderWidth:2.5,order:1},
+    {label:'Meta ('+META+'%)',data:metaLine,borderColor:'#6FCF7F',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,order:2}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#B0B0CC',font:{size:11},boxWidth:12,padding:16}}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11},color:'#B0B0CC'},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'transparent'}},x:{ticks:{font:{size:10},color:'#B0B0CC',maxRotation:45,autoSkip:true,maxTicksLimit:18},grid:{color:'rgba(255,255,255,0.03)'},border:{color:'transparent'}}}}});
+}
+
+function renderPizza(d){
+  if(cP)cP.destroy();
+  const alto=d.filter(x=>x.pct>=META).length,medio=d.filter(x=>x.pct>=20&&x.pct<META).length,baixo=d.filter(x=>x.pct<20).length;
+  const cores=['#6FCF7F','#F0B855','#F07070'];
+  document.getElementById('leg-pizza').innerHTML=[['≥'+META+'% (meta)',alto],['20–'+( META-1)+'%',medio],['<20%',baixo]].map(([l,v],i)=>`<span class="leg-item"><span class="leg-dot" style="background:${cores[i]}"></span>${l} (${v})</span>`).join('');
+  cP=new Chart(document.getElementById('cPizza'),{type:'doughnut',data:{labels:['Meta+','Médio','Baixo'],datasets:[{data:[alto,medio,baixo],backgroundColor:cores,borderWidth:3,borderColor:'#2A2A42'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}});
+}
+
+function renderBarra(d){
+  if(cB)cB.destroy();
+  const meses={},nm={'2026-01':'Jan','2026-02':'Fev','2026-03':'Mar','2026-04':'Abr','2026-05':'Mai','2026-06':'Jun'};
+  d.forEach(x=>{const m=x.data.slice(0,7);if(!meses[m])meses[m]={soma:0,n:0};meses[m].soma+=x.pct;meses[m].n++;});
+  const sorted=Object.entries(meses).sort((a,b)=>a[0].localeCompare(b[0]));
+  const labels=sorted.map(([k])=>nm[k]||k),vals=sorted.map(([,v])=>+(v.soma/v.n).toFixed(1));
+  cB=new Chart(document.getElementById('cBarra'),{type:'bar',data:{labels,datasets:[
+    {label:'Média mensal %',data:vals,backgroundColor:vals.map(v=>v>=META?'#6FCF7F':v>=20?'#FFE600':'#F07070'),borderRadius:6,borderSkipped:false,order:2},
+    {label:'Meta ('+META+'%)',data:vals.map(()=>META),type:'line',borderColor:'#6FCF7F',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false,order:1}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#B0B0CC',font:{size:11},boxWidth:12,padding:16}}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11},color:'#B0B0CC'},grid:{color:'rgba(255,255,255,0.05)'},border:{color:'transparent'}},x:{ticks:{font:{size:12},color:'#B0B0CC'},grid:{color:'rgba(255,255,255,0.03)'},border:{color:'transparent'}}}}});
+}
+
+function renderTabela(d){
+  const rows=d.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,20);
+  const pc=p=>p>=META?'p-ok':p>=20?'p-mid':'p-low';
+  const pl=p=>p>=META?'Acima da meta':p>=20?'Médio':'Baixo';
+  const bc=p=>p>=META?'#6FCF7F':p>=20?'#FFE600':'#F07070';
+  const diff=p=>{const dv=+(p-META).toFixed(1);return dv>=0?`<span style="color:#6FCF7F;font-weight:700">+${dv}%</span>`:`<span style="color:#F07070;font-weight:700">${dv}%</span>`;};
+  document.getElementById('tbody').innerHTML=rows.map(x=>`
+    <tr>
+      <td>${x.data.split('-').reverse().join('/')}</td>
+      <td><code>${x.site}</code></td>
+      <td><code>${x.facility}</code></td>
+      <td><span style="font-weight:700;margin-right:8px;">${x.pct}%</span><span class="prog-wrap"><span class="prog-bar" style="width:${x.pct}%;background:${bc(x.pct)}"></span></span></td>
+      <td>${diff(x.pct)}</td>
+      <td><span class="pill ${pc(x.pct)}">${pl(x.pct)}</span></td>
+    </tr>`).join('');
+}
+
+function renderAll(){
+  const mes=document.getElementById('f-mes').value;
+  if(mes){const[ano,m]=mes.split('-');const ul=new Date(+ano,+m,0).getDate();document.getElementById('f-ini').value=`${mes}-01`;document.getElementById('f-fim').value=`${mes}-${String(ul).padStart(2,'0')}`;}
+  const d=filtrar();
+  renderKPIs(d);renderLinha(d);renderPizza(d);renderBarra(d);renderTabela(d);
+}
+function limpar(){
+  document.getElementById('f-ini').value='2026-01-02';document.getElementById('f-fim').value='2026-06-15';
+  document.getElementById('f-mes').value='';document.getElementById('f-perf').value='';renderAll();
+}
+renderAll();
+
+</script>
+
+<script>
+// ═══ PRODUTIVIDADE ═══
+
+const TS=300, TL=1100;
+const DATES=["14/05","15/05","16/05","17/05","18/05","19/05","20/05","21/05","22/05","23/05","24/05","25/05","26/05","27/05","28/05","29/05","30/05","31/05","01/06","02/06","03/06","04/06","05/06","06/06","08/06","09/06","10/06","11/06","12/06","13/06","14/06","15/06"];
+const SE={"14/05":103,"15/05":95,"16/05":91,"17/05":87,"18/05":73,"19/05":91,"20/05":92,"21/05":106,"23/05":84,"24/05":111,"25/05":88,"26/05":93,"27/05":93,"28/05":90,"29/05":106,"30/05":98,"31/05":113,"01/06":101,"02/06":93,"03/06":92,"04/06":99,"05/06":101,"06/06":84,"08/06":92,"09/06":106,"10/06":99,"11/06":94,"12/06":113,"13/06":98,"14/06":57,"15/06":107};
+const LE={"14/05":98,"16/05":94,"17/05":95,"18/05":81,"19/05":76,"20/05":100,"21/05":103,"22/05":114,"23/05":92,"24/05":99,"25/05":97,"26/05":74,"27/05":107,"28/05":116,"29/05":115,"30/05":99,"31/05":91,"01/06":100,"02/06":86,"03/06":87,"04/06":99,"05/06":113,"06/06":87,"08/06":79,"09/06":111,"10/06":103,"11/06":110,"12/06":110,"13/06":90,"14/06":76,"15/06":84};
+const SD={"14/05":{"Yasmin Silva":284,"Raquel De Oliveira Rufino":298,"Raissa Goncalves Lopes":332,"Rafaela Aparecida Dos Santos":371,"Leticia Victoria Batista De Oliveira":320,"Katia Lourrany De Souza":280,"Karla Franciscani Goncalves":358,"Izadora Lazaro Ferreira":190,"Giovanna Marya Santana Silva":212,"Gabriely Martins Da Silva":339,"Erica Maria Dos Santos":190,"Denis Miranda Torres":322,"Bruna Adriana Theodoro":333,"Barbara Florenca Silva":364,"Stefanie Oliveira Fernandes Tavares":355,"Rafaella De Bessas Silva":326,"Girlene Ferreira Dos Santos":449,"Camily Vitoria Silva":264},"15/05":{"Raquel De Oliveira Rufino":298,"Denis Miranda Torres":341,"Luiza Fernanda Leonel Rodrigues":348,"Stefanie Oliveira Fernandes Tavares":350,"Rafaela Aparecida Dos Santos":228,"Erica Maria Dos Santos":316,"Samara Santos Barbosa":333,"Pamela De Souza Goncalves":373,"Kaylane Fernanda Silva Santos":185,"Benjamin Batista":256,"Ingrid De Assis Nascimento":351,"Yasmin Silva":258,"Girlene Ferreira Dos Santos":311,"Izadora Lazaro Ferreira":270,"Giovanna Marya Santana Silva":211,"Karla Franciscani Goncalves":278,"Katia Lourrany De Souza":236,"Rafaella De Bessas Silva":203,"Gabriely Martins Da Silva":296,"Taylany Souza Lima":226,"Leticia Victoria Batista De Oliveira":179,"Joicy Eugenia Gomes":217,"Debora Correa Dos Santos":134,"Jaqueline Neves":164},"16/05":{"Raquel De Oliveira Rufino":323,"Denis Miranda Torres":301,"Luiza Fernanda Leonel Rodrigues":359,"Rafaela Aparecida Dos Santos":341,"Benjamin Batista":252,"Debora Correa Dos Santos":304,"Gabriely Martins Da Silva":296,"Herminia Francisco Amaral":100,"Yasmin Silva":225,"Izadora Lazaro Ferreira":291,"Taylany Souza Lima":177,"Leticia Victoria Batista De Oliveira":178,"Katia Lourrany De Souza":231},"17/05":{"Raquel De Oliveira Rufino":275,"Kaua Batista Faria":255,"Eduarda Yasmim E Souza":236,"Debora Correa Dos Santos":272},"18/05":{"Samara Santos Barbosa":246,"Raissa Goncalves Lopes":303,"Rafaela Aparecida Dos Santos":245,"Pamela De Souza Goncalves":217,"Leilane Vieira Do Nascimento":267,"Kaylane Fernanda Silva Santos":322,"Hechila Goncalves De Sousa Lima":180,"Eduarda Yasmim E Souza":145,"Denis Miranda Torres":229,"Benjamin Batista":267,"Ananda Soares Da Silva":163,"Alberth Santos Silveira":185,"Gabriel De Freitas Goncalves":183,"Vinicius Carvalho Araujo":195,"Erica Maria Dos Santos":152},"19/05":{"Herminia Francisco Amaral":199,"Erica Maria Dos Santos":67,"Joicy Eugenia Gomes":349,"Denis Miranda Torres":279,"Samara Santos Barbosa":253,"Pamela De Souza Goncalves":344,"Girlene Ferreira Dos Santos":370,"Izadora Lazaro Ferreira":278,"Raissa Goncalves Lopes":298,"Leilane Vieira Do Nascimento":317,"Luiza Fernanda Leonel Rodrigues":319,"Katia Lourrany De Souza":267,"Yane Graziely Cizoski Brasil":161,"Karla Franciscani Goncalves":332,"Aline Domingues Dos Santos":154,"Rafaella De Bessas Silva":206,"Yasmin Silva":288,"Leticia Victoria Batista De Oliveira":215,"Barbara Florenca Silva":158,"Rafaela Aparecida Dos Santos":354,"Giovanna Marya Santana Silva":256,"Luana Coutinho Garcia":244},"20/05":{"Raquel De Oliveira Rufino":275,"Rafaela Aparecida Dos Santos":348,"Kaylane Fernanda Silva Santos":196,"Ananda Soares Da Silva":228,"Raissa Goncalves Lopes":310,"Leilane Vieira Do Nascimento":270,"Denis Miranda Torres":336,"Samara Santos Barbosa":265,"Pamela De Souza Goncalves":320,"Benjamin Batista":256,"Debora Correa Dos Santos":261,"Gabriely Martins Da Silva":248},"21/05":{"Erica Maria Dos Santos":315,"Raquel De Oliveira Rufino":231,"Rafaela Aparecida Dos Santos":330,"Kaylane Fernanda Silva Santos":295,"Gabriel De Freitas Goncalves":215,"Ananda Soares Da Silva":217,"Raissa Goncalves Lopes":243,"Bruna Mirelly Ferreira Almeida":482,"Denis Miranda Torres":359,"Samara Santos Barbosa":339,"Pamela De Souza Goncalves":304,"Luiza Fernanda Leonel Rodrigues":424,"Benjamin Batista":271,"Gabriely Martins Da Silva":433},"23/05":{"Erica Maria Dos Santos":193,"Denis Miranda Torres":365,"Samara Santos Barbosa":352,"Pamela De Souza Goncalves":255,"Izadora Lazaro Ferreira":347,"Raissa Goncalves Lopes":328,"Bruna Mirelly Ferreira Almeida":331,"Leilane Vieira Do Nascimento":272,"Luiza Fernanda Leonel Rodrigues":204,"Benjamin Batista":409,"Katia Lourrany De Souza":280,"Karla Franciscani Goncalves":260,"Yasmin Silva":104,"Jhennifer Eduarda Das Neves Oliveira":189,"Leticia Victoria Batista De Oliveira":227,"Tulio Pereira Fernandes De Souza":232,"Debora Correa Dos Santos":370,"Raquel De Oliveira Rufino":256,"Barbara Florenca Silva":302,"Rafaela Aparecida Dos Santos":239,"Taylany Souza Lima":193,"Jaqueline Neves":198,"Stefanie Oliveira Fernandes Tavares":55,"Gabriely Martins Da Silva":279},"24/05":{"Gabriely Martins Da Silva":343,"Debora Correa Dos Santos":347,"Kaylane Fernanda Silva Santos":313},"25/05":{"Erica Maria Dos Santos":212,"Barbara Florenca Silva":110,"Rafaela Aparecida Dos Santos":220,"Kaylane Fernanda Silva Santos":288,"Jaqueline Silva Rodrigues Barcelos":192,"Raissa Goncalves Lopes":288,"Leilane Vieira Do Nascimento":272,"Denis Miranda Torres":270,"Thiago Ventura Lionel":249,"Samara Santos Barbosa":249,"Pamela De Souza Goncalves":424,"Benjamin Batista":358,"Luiza Fernanda Leonel Rodrigues":404,"Lucas Barbosa Da Silva":205,"Raphael Felipe Silva Gomes":208},"26/05":{"Rafaela Aparecida Dos Santos":394,"Kaua Batista Faria":291,"Raissa Goncalves Lopes":192,"Leilane Vieira Do Nascimento":394,"Thiago Ventura Lionel":261,"Samara Santos Barbosa":266,"Pamela De Souza Goncalves":242,"Luiza Fernanda Leonel Rodrigues":264,"Raphael Felipe Silva Gomes":209},"27/05":{"Erica Maria Dos Santos":190,"Joicy Eugenia Gomes":333,"Kaylane Fernanda Silva Santos":204,"Denis Miranda Torres":329,"Samara Santos Barbosa":299,"Pamela De Souza Goncalves":353,"Raissa Goncalves Lopes":318,"Leilane Vieira Do Nascimento":285,"Luiza Fernanda Leonel Rodrigues":212,"Benjamin Batista":284,"Katia Lourrany De Souza":293,"Karla Franciscani Goncalves":320,"Aline Domingues Dos Santos":207,"Yasmin Silva":260,"Leticia Victoria Batista De Oliveira":209,"Debora Correa Dos Santos":228,"Raquel De Oliveira Rufino":275,"Barbara Florenca Silva":266,"Rafaela Aparecida Dos Santos":353,"Taylany Souza Lima":178,"Giovanna Marya Santana Silva":269,"Gabriely Martins Da Silva":306},"28/05":{"Erica Maria Dos Santos":306,"Joicy Eugenia Gomes":220,"Kaylane Fernanda Silva Santos":268,"Denis Miranda Torres":276,"Samara Santos Barbosa":395,"Ingrid De Assis Nascimento":307,"Pamela De Souza Goncalves":436,"Izadora Lazaro Ferreira":271,"Raissa Goncalves Lopes":336,"Leilane Vieira Do Nascimento":316,"Luiza Fernanda Leonel Rodrigues":336,"Benjamin Batista":303,"Hebert Henrique Gontijo":199,"Katia Lourrany De Souza":290,"Karla Franciscani Goncalves":268,"Aline Domingues Dos Santos":201,"Rafaella De Bessas Silva":102,"Yasmin Silva":230,"Leticia Victoria Batista De Oliveira":269,"Debora Correa Dos Santos":285,"Raquel De Oliveira Rufino":264,"Barbara Florenca Silva":282,"Rafaela Aparecida Dos Santos":350,"Jaqueline Silva Rodrigues Barcelos":236,"Vitor Bryan Cruz Santos":112,"Taylany Souza Lima":169,"Jaqueline Neves":155,"Stefanie Oliveira Fernandes Tavares":197,"Giovanna Marya Santana Silva":205,"Gabriely Martins Da Silva":306},"29/05":{"Erica Maria Dos Santos":146,"Joicy Eugenia Gomes":330,"Kaylane Fernanda Silva Santos":334,"Denis Miranda Torres":353,"Thiago Ventura Lionel":254,"Samara Santos Barbosa":365,"Pamela De Souza Goncalves":457,"Ingrid De Assis Nascimento":280,"Alberth Santos Silveira":364,"Izadora Lazaro Ferreira":218,"Luiza Fernanda Leonel Rodrigues":238,"Benjamin Batista":347,"Katia Lourrany De Souza":263,"Karla Franciscani Goncalves":334,"Aline Domingues Dos Santos":277,"Rafaella De Bessas Silva":255,"Yasmin Silva":302,"Leticia Victoria Batista De Oliveira":246,"Tulio Pereira Fernandes De Souza":265,"Debora Correa Dos Santos":314,"Raquel De Oliveira Rufino":276,"Barbara Florenca Silva":358,"Gabriel De Freitas Goncalves":268,"Jaqueline Silva Rodrigues Barcelos":282,"Taylany Souza Lima":229,"Jaqueline Neves":174,"Emanuella Sinelandia De Lima":170,"Stefanie Oliveira Fernandes Tavares":87,"Giovanna Marya Santana Silva":309,"Gabriely Martins Da Silva":339},"30/05":{"Samara Santos Barbosa":245,"Pamela De Souza Goncalves":383,"Raissa Goncalves Lopes":287,"Leilane Vieira Do Nascimento":214,"Luiza Fernanda Leonel Rodrigues":304,"Benjamin Batista":409,"Katia Lourrany De Souza":252,"Karla Franciscani Goncalves":339,"Aline Domingues Dos Santos":227,"Yasmin Silva":332,"Leticia Victoria Batista De Oliveira":249,"Debora Correa Dos Santos":232,"Raphael Felipe Silva Gomes":201,"Barbara Florenca Silva":344,"Raquel De Oliveira Rufino":329,"Rafaela Aparecida Dos Santos":374,"Jaqueline Silva Rodrigues Barcelos":250,"Taylany Souza Lima":270,"Gabriely Martins Da Silva":350},"31/05":{"Gabriely Martins Da Silva":369,"Raquel De Oliveira Rufino":360,"Kaylane Fernanda Silva Santos":287},"01/06":{"Erica Maria Dos Santos":199,"Gabriel Henrique Guimaraes Azevedo Sader":330,"Rafaela Aparecida Dos Santos":379,"Barbara Florenca Silva":139,"Jaqueline Silva Rodrigues Barcelos":243,"Raissa Goncalves Lopes":395,"Bruna Mirelly Ferreira Almeida":353,"Denis Miranda Torres":363,"Samara Santos Barbosa":400,"Stefanie Oliveira Fernandes Tavares":256,"Luiza Fernanda Leonel Rodrigues":375,"Jhennifer Eduarda Das Neves Oliveira":211},"02/06":{"Herminia Francisco Amaral":148,"Kettly Lorrany Mendonca":231,"Joicy Eugenia Gomes":131,"Denis Miranda Torres":333,"Samara Santos Barbosa":321,"Pamela De Souza Goncalves":298,"Girlene Ferreira Dos Santos":368,"Izadora Lazaro Ferreira":298,"Raissa Goncalves Lopes":331,"Bruna Mirelly Ferreira Almeida":365,"Luiza Fernanda Leonel Rodrigues":408,"Katia Lourrany De Souza":315,"Karla Franciscani Goncalves":326,"Aline Domingues Dos Santos":260,"Rafaella De Bessas Silva":195,"Yasmin Silva":367,"Jhennifer Eduarda Das Neves Oliveira":161,"Leticia Victoria Batista De Oliveira":242,"Tulio Pereira Fernandes De Souza":229,"Barbara Florenca Silva":218,"Rafaela Aparecida Dos Santos":256,"Jaqueline Silva Rodrigues Barcelos":296,"Taylany Souza Lima":274,"Giovanna Marya Santana Silva":319},"03/06":{"Erica Maria Dos Santos":203,"Joicy Eugenia Gomes":308,"Kaylane Fernanda Silva Santos":290,"Denis Miranda Torres":357,"Samara Santos Barbosa":323,"Pamela De Souza Goncalves":369,"Girlene Ferreira Dos Santos":375,"Izadora Lazaro Ferreira":273,"Luiza Fernanda Leonel Rodrigues":430,"Benjamin Batista":412,"Katia Lourrany De Souza":273,"Karla Franciscani Goncalves":344,"Rafaella De Bessas Silva":43,"Yasmin Silva":383,"Leticia Victoria Batista De Oliveira":203,"Tulio Pereira Fernandes De Souza":250,"Debora Correa Dos Santos":273,"Raquel De Oliveira Rufino":304,"Barbara Florenca Silva":102,"Rafaela Aparecida Dos Santos":251,"Jaqueline Silva Rodrigues Barcelos":334,"Taylany Souza Lima":256,"Jaqueline Neves":106,"Stefanie Oliveira Fernandes Tavares":163,"Giovanna Marya Santana Silva":171,"Gabriely Martins Da Silva":377},"04/06":{"Herminia Francisco Amaral":270,"Raquel De Oliveira Rufino":338,"Rafaela Aparecida Dos Santos":295,"Larissa Carvalho Sousa":370,"Jaqueline Silva Rodrigues Barcelos":296,"Denis Miranda Torres":328,"Emanuella Sinelandia De Lima":222,"Samara Santos Barbosa":267},"05/06":{"Erica Maria Dos Santos":330,"Herminia Francisco Amaral":188,"Denis Miranda Torres":333,"Samara Santos Barbosa":356,"Pamela De Souza Goncalves":377,"Ingrid De Assis Nascimento":404,"Alberth Santos Silveira":390,"Izadora Lazaro Ferreira":307,"Leilane Vieira Do Nascimento":372,"Luiza Fernanda Leonel Rodrigues":242,"Benjamin Batista":332,"Katia Lourrany De Souza":265,"Karla Franciscani Goncalves":346,"Aline Domingues Dos Santos":170,"Rafaella De Bessas Silva":301,"Yasmin Silva":204,"Jhennifer Eduarda Das Neves Oliveira":256,"Tulio Pereira Fernandes De Souza":242,"Debora Correa Dos Santos":295,"Raquel De Oliveira Rufino":268,"Barbara Florenca Silva":314,"Rafaela Aparecida Dos Santos":381,"Larissa Carvalho Sousa":296,"Jaqueline Silva Rodrigues Barcelos":245,"Jaqueline Neves":165,"Emanuella Sinelandia De Lima":211,"Stefanie Oliveira Fernandes Tavares":238,"Giovanna Marya Santana Silva":198,"Gabriely Martins Da Silva":309},"06/06":{"Erica Maria Dos Santos":233,"Joicy Eugenia Gomes":250,"Denis Miranda Torres":303,"Pamela De Souza Goncalves":290,"Izadora Lazaro Ferreira":299,"Raissa Goncalves Lopes":325,"Luiza Fernanda Leonel Rodrigues":247,"Katia Lourrany De Souza":304,"Karla Franciscani Goncalves":379,"Yasmin Silva":270,"Leticia Victoria Batista De Oliveira":268,"Tulio Pereira Fernandes De Souza":273,"Debora Correa Dos Santos":224,"Lucas Barbosa Da Silva":184,"Raquel De Oliveira Rufino":236,"Barbara Florenca Silva":93,"Rafaela Aparecida Dos Santos":225,"Jaqueline Silva Rodrigues Barcelos":258,"Taylany Souza Lima":301,"Jaqueline Neves":177,"Emanuella Sinelandia De Lima":30,"Giovanna Marya Santana Silva":357,"Gabriely Martins Da Silva":298},"08/06":{"Gabriel Henrique Guimaraes Azevedo Sader":224,"Barbara Florenca Silva":148,"Gabriel De Freitas Goncalves":272,"Jaqueline Silva Rodrigues Barcelos":233,"Denis Miranda Torres":329,"Thiago Ventura Lionel":239,"Samara Santos Barbosa":307,"Jhennifer Eduarda Das Neves Oliveira":201,"Pamela De Souza Goncalves":346,"Luiza Fernanda Leonel Rodrigues":383,"Benjamin Batista":352},"09/06":{"Erica Maria Dos Santos":276,"Herminia Francisco Amaral":104,"Joicy Eugenia Gomes":307,"Denis Miranda Torres":297,"Cesar Santos Ramos":273,"Samara Santos Barbosa":287,"Pamela De Souza Goncalves":245,"Girlene Ferreira Dos Santos":486,"Marco Tulio Santos Silveira":251,"Raissa Goncalves Lopes":344,"Katia Lourrany De Souza":294,"Karla Franciscani Goncalves":391,"Aline Domingues Dos Santos":232,"Tulio Pereira Fernandes De Souza":233,"Barbara Florenca Silva":198,"Rafaela Aparecida Dos Santos":172,"Gabriel De Freitas Goncalves":325,"Leticia Ferreira Santos":404,"Jaqueline Silva Rodrigues Barcelos":285,"Taylany Souza Lima":323,"Kaua Batista Faria":356,"Giovanna Marya Santana Silva":334,"Luana Coutinho Garcia":296},"10/06":{"Joicy Eugenia Gomes":394,"Kaylane Fernanda Silva Santos":354,"Denis Miranda Torres":347,"Samara Santos Barbosa":257,"Pamela De Souza Goncalves":395,"Ingrid De Assis Nascimento":217,"Alberth Santos Silveira":358,"Girlene Ferreira Dos Santos":382,"Erika Santos Silva":227,"Izadora Lazaro Ferreira":340,"Benjamin Batista":370,"Katia Lourrany De Souza":294,"Aline Domingues Dos Santos":269,"Leticia Victoria Batista De Oliveira":302,"Tulio Pereira Fernandes De Souza":264,"Debora Correa Dos Santos":298,"Raquel De Oliveira Rufino":277,"Rafaela Aparecida Dos Santos":329,"Jaqueline Silva Rodrigues Barcelos":349,"Kaua Batista Faria":339,"Jaqueline Neves":158,"Emanuella Sinelandia De Lima":154,"Lidiane Andrade Araujo":251,"Stefanie Oliveira Fernandes Tavares":260,"Giovanna Marya Santana Silva":281,"Gabriely Martins Da Silva":393},"11/06":{"Erica Maria Dos Santos":292,"Herminia Francisco Amaral":163,"Joicy Eugenia Gomes":273,"Denis Miranda Torres":362,"Samara Santos Barbosa":300,"Pamela De Souza Goncalves":384,"Ingrid De Assis Nascimento":222,"Erika Santos Silva":260,"Izadora Lazaro Ferreira":254,"Raissa Goncalves Lopes":302,"Leilane Vieira Do Nascimento":207,"Luiza Fernanda Leonel Rodrigues":272,"Benjamin Batista":348,"Katia Lourrany De Souza":248,"Aline Domingues Dos Santos":153,"Tulio Pereira Fernandes De Souza":217,"Debora Correa Dos Santos":266,"Raquel De Oliveira Rufino":301,"Rafaela Aparecida Dos Santos":257,"Gabriel Henrique Guimaraes Azevedo Sader":250,"Jaqueline Silva Rodrigues Barcelos":360,"Taylany Souza Lima":245,"Emanuella Sinelandia De Lima":238,"Giovanna Marya Santana Silva":188,"Gabriely Martins Da Silva":341},"12/06":{"Raquel De Oliveira Rufino":322,"Rafaela Aparecida Dos Santos":432,"Barbara Florenca Silva":184,"Jaqueline Silva Rodrigues Barcelos":422,"Denis Miranda Torres":406,"Emanuella Sinelandia De Lima":288,"Jaqueline Neves":214,"Samara Santos Barbosa":377,"Pamela De Souza Goncalves":425,"Benjamin Batista":398,"Luiza Fernanda Leonel Rodrigues":292,"Ingrid De Assis Nascimento":309,"Debora Correa Dos Santos":286,"Gabriely Martins Da Silva":404},"13/06":{"Denis Miranda Torres":331,"Pamela De Souza Goncalves":396,"Ana Carolina Paiva Barbosa":216,"Luiza Fernanda Leonel Rodrigues":294,"Benjamin Batista":392,"Katia Lourrany De Souza":270,"Aline Domingues Dos Santos":201,"Rafaella De Bessas Silva":179,"Tulio Pereira Fernandes De Souza":267,"Debora Correa Dos Santos":241,"Raquel De Oliveira Rufino":336,"Barbara Florenca Silva":208,"Rafaela Aparecida Dos Santos":357,"Gabriel Henrique Guimaraes Azevedo Sader":232,"Thaemy Sofia Agripino Gomes":141,"Kaua Batista Faria":393,"Jaqueline Silva Rodrigues Barcelos":347,"Jaqueline Neves":151,"Gabriely Martins Da Silva":142},"14/06":{"Kaua Batista Faria":187,"Emanuella Sinelandia De Lima":119,"Miroslavia Kenia Santos":221,"Veronica Cristina Da Silva":179,"Leticia De Oliveira Silva":132,"Isabele Borges Da Silva":212,"Pedro Geovane Soares":148},"15/06":{"Raquel De Oliveira Rufino":361,"Kaylane Fernanda Silva Santos":370,"Jaqueline Silva Rodrigues Barcelos":383,"Denis Miranda Torres":379,"Jaqueline Neves":232,"Pamela De Souza Goncalves":374,"Benjamin Batista":322,"Andrew Alves Batista":226,"Luana Coutinho Garcia":354,"Debora Correa Dos Santos":342,"Gabriely Martins Da Silva":201}};
+const LD={"14/05":{"Barbara Florenca Silva":1050,"Joicy Eugenia Gomes":879,"Rafaela Aparecida Dos Santos":1071,"Bruna Mirelly Ferreira Almeida":948,"Jaqueline Neves":1096,"Bruna Adriana Theodoro":1254},"16/05":{"Erica Maria Dos Santos":990,"Joicy Eugenia Gomes":989,"Barbara Florenca Silva":936,"Jaqueline Neves":893,"Bruna Adriana Theodoro":1091,"Stefanie Oliveira Fernandes Tavares":1062},"17/05":{"Leticia Ferreira Santos":1072,"Stefanie Oliveira Fernandes Tavares":1008},"18/05":{"Erica Maria Dos Santos":1065,"Barbara Florenca Silva":919,"Luiza Fernanda Leonel Rodrigues":1007,"Ingrid De Assis Nascimento":803,"Pamela De Souza Goncalves":680},"19/05":{"Erica Maria Dos Santos":1043,"Barbara Florenca Silva":1166,"Rafaela Aparecida Dos Santos":1030,"Samara Santos Barbosa":949,"Luiza Fernanda Leonel Rodrigues":804},"20/05":{"Bruna Mirelly Ferreira Almeida":982,"Jaqueline Neves":836,"Bruna Adriana Theodoro":1166,"Luiza Fernanda Leonel Rodrigues":1429},"21/05":{"Barbara Florenca Silva":1049,"Jaqueline Neves":1084,"Bruna Adriana Theodoro":1115,"Stefanie Oliveira Fernandes Tavares":1300},"22/05":{"Erica Maria Dos Santos":1139,"Barbara Florenca Silva":997,"Rafaela Aparecida Dos Santos":1262,"Jaqueline Neves":1241,"Samara Santos Barbosa":1181,"Luiza Fernanda Leonel Rodrigues":1612,"Debora Correa Dos Santos":1153},"23/05":{"Erica Maria Dos Santos":908,"Barbara Florenca Silva":1017,"Rafaela Aparecida Dos Santos":1186,"Joicy Eugenia Gomes":1032,"Bruna Mirelly Ferreira Almeida":757,"Jaqueline Neves":1115,"Luiza Fernanda Leonel Rodrigues":1187,"Debora Correa Dos Santos":1323},"24/05":{"Stefanie Oliveira Fernandes Tavares":1094,"Ingrid De Assis Nascimento":1095},"25/05":{"Erica Maria Dos Santos":1017,"Barbara Florenca Silva":1007,"Samara Santos Barbosa":1127,"Luiza Fernanda Leonel Rodrigues":1131},"26/05":{"Erica Maria Dos Santos":824,"Barbara Florenca Silva":902,"Luiza Fernanda Leonel Rodrigues":716},"27/05":{"Barbara Florenca Silva":1027,"Rafaela Aparecida Dos Santos":1287,"Rafaella De Bessas Silva":1124,"Jaqueline Neves":1028,"Luiza Fernanda Leonel Rodrigues":1320,"Stefanie Oliveira Fernandes Tavares":1190,"Debora Correa Dos Santos":1087},"28/05":{"Erica Maria Dos Santos":1095,"Barbara Florenca Silva":1133,"Rafaela Aparecida Dos Santos":1330,"Rafaella De Bessas Silva":1201,"Jaqueline Neves":1206,"Samara Santos Barbosa":1358,"Stefanie Oliveira Fernandes Tavares":1333,"Pamela De Souza Goncalves":1308},"29/05":{"Erica Maria Dos Santos":1066,"Barbara Florenca Silva":1222,"Rafaela Aparecida Dos Santos":1308,"Izadora Lazaro Ferreira":1550,"Rafaella De Bessas Silva":1185,"Jaqueline Neves":1160,"Stefanie Oliveira Fernandes Tavares":1236},"30/05":{"Erica Maria Dos Santos":972,"Barbara Florenca Silva":1009,"Rafaela Aparecida Dos Santos":1093,"Jaqueline Neves":1112,"Luiza Fernanda Leonel Rodrigues":1195,"Pamela De Souza Goncalves":1360,"Debora Correa Dos Santos":918},"31/05":{"Stefanie Oliveira Fernandes Tavares":1080,"Jaqueline Neves":922},"01/06":{"Erica Maria Dos Santos":1186,"Barbara Florenca Silva":997,"Bruna Mirelly Ferreira Almeida":1097,"Stefanie Oliveira Fernandes Tavares":1132},"02/06":{"Erica Maria Dos Santos":760,"Barbara Florenca Silva":1045,"Rafaela Aparecida Dos Santos":1188,"Joicy Eugenia Gomes":794,"Keven Viana Dos Santos":143,"Bruna Mirelly Ferreira Almeida":1049,"Rafaella De Bessas Silva":1029,"Samara Santos Barbosa":1072,"Pamela De Souza Goncalves":1326},"03/06":{"Erica Maria Dos Santos":1027,"Barbara Florenca Silva":1204,"Rafaela Aparecida Dos Santos":1034,"Rafaella De Bessas Silva":1225,"Jaqueline Neves":1121,"Matheus Ferreira Carlos De Oliveira":99,"Stefanie Oliveira Fernandes Tavares":988,"Ingrid De Assis Nascimento":60},"04/06":{"Rafaela Aparecida Dos Santos":1154,"Stefanie Oliveira Fernandes Tavares":1080,"Luiza Fernanda Leonel Rodrigues":1198,"Ingrid De Assis Nascimento":921},"05/06":{"Erica Maria Dos Santos":1272,"Barbara Florenca Silva":1109,"Rafaela Aparecida Dos Santos":1370,"Taylany Souza Lima":1166,"Jaqueline Neves":1260,"Samara Santos Barbosa":1029,"Luiza Fernanda Leonel Rodrigues":1299,"Stefanie Oliveira Fernandes Tavares":1418},"06/06":{"Erica Maria Dos Santos":1024,"Joicy Eugenia Gomes":1295,"Rafaela Aparecida Dos Santos":1284,"Barbara Florenca Silva":800,"Izadora Lazaro Ferreira":1377,"Rafaella De Bessas Silva":932,"Taylany Souza Lima":643,"Jaqueline Neves":882,"Luiza Fernanda Leonel Rodrigues":1001,"Stefanie Oliveira Fernandes Tavares":50},"08/06":{"Erica Maria Dos Santos":1012,"Barbara Florenca Silva":997,"Rafaela Aparecida Dos Santos":835,"Samara Santos Barbosa":1048,"Ingrid De Assis Nascimento":479},"09/06":{"Erica Maria Dos Santos":1107,"Barbara Florenca Silva":1066,"Rafaela Aparecida Dos Santos":1380,"Kaua Batista Faria":1028,"Rafaella De Bessas Silva":1138},"10/06":{"Erica Maria Dos Santos":1226,"Barbara Florenca Silva":1241,"Rafaela Aparecida Dos Santos":1567,"Kaua Batista Faria":1405,"Rafaella De Bessas Silva":1446,"Jaqueline Neves":1028,"Taylany Souza Lima":857,"Matheus Ferreira Carlos De Oliveira":102,"Stefanie Oliveira Fernandes Tavares":1507},"11/06":{"Erica Maria Dos Santos":1217,"Barbara Florenca Silva":1116,"Rafaella De Bessas Silva":897,"Jaqueline Neves":1516,"Luiza Fernanda Leonel Rodrigues":1084,"Stefanie Oliveira Fernandes Tavares":1128},"12/06":{"Erica Maria Dos Santos":1196,"Barbara Florenca Silva":1208,"Jaqueline Neves":1313,"Luiza Fernanda Leonel Rodrigues":1136},"13/06":{"Erica Maria Dos Santos":1099,"Barbara Florenca Silva":202,"Rafaela Aparecida Dos Santos":1221,"Taylany Souza Lima":818,"Jaqueline Neves":1014,"Luiza Fernanda Leonel Rodrigues":1213,"Gabriely Martins Da Silva":600},"14/06":{"Vinicius Carvalho Araujo":847,"Kaua Batista Faria":812,"Emanuella Sinelandia De Lima":908,"Ingrid De Assis Nascimento":796},"15/06":{"Kaua Batista Faria":792,"Jaqueline Neves":1116,"Stefanie Oliveira Fernandes Tavares":937,"Pamela De Souza Goncalves":858}};
+
+
+const SA={"14/05":310.4,"15/05":265.1,"16/05":259.8,"17/05":259.5,"18/05":219.9,"19/05":259.5,"20/05":276.1,"21/05":318.4,"23/05":260.0,"24/05":334.3,"25/05":263.3,"26/05":279.2,"27/05":271.4,"28/05":263.0,"29/05":281.1,"30/05":294.3,"31/05":338.7,"01/06":303.6,"02/06":278.2,"03/06":275.9,"04/06":298.2,"05/06":287.4,"06/06":253.2,"08/06":275.8,"09/06":291.9,"10/06":296.7,"11/06":268.1,"12/06":339.9,"13/06":268.1,"14/06":171.1,"15/06":322.2};
+const LA={"14/05":1049.7,"16/05":993.5,"17/05":1040.0,"18/05":894.8,"19/05":998.4,"20/05":1103.2,"21/05":1137.0,"22/05":1226.4,"23/05":1065.6,"24/05":1094.5,"25/05":1070.5,"26/05":814.0,"27/05":1151.9,"28/05":1245.5,"29/05":1246.7,"30/05":1094.1,"31/05":1001.0,"01/06":1103.0,"02/06":941.6,"03/06":844.8,"04/06":1088.2,"05/06":1240.4,"06/06":928.8,"08/06":874.2,"09/06":1143.8,"10/06":1133.0,"11/06":1159.7,"12/06":1213.2,"13/06":881.0,"14/06":840.8,"15/06":925.8};
+
+// FULL DATA (hourly + daily per person)
+const SF={"14/05": {"Yasmin Silva": {"hours": {"08:00h": 255.0, "09:00h": 314.0}, "daily": 284}, "Raquel De Oliveira Rufino": {"hours": {"08:00h": 314.0, "09:00h": 283.0}, "daily": 298}, "Raissa Goncalves Lopes": {"hours": {"08:00h": 399.0, "09:00h": 266.0}, "daily": 332}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 381.0, "09:00h": 361.0}, "daily": 371}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 328.0, "09:00h": 311.0}, "daily": 320}, "Katia Lourrany De Souza": {"hours": {"08:00h": 299.0, "09:00h": 260.0}, "daily": 280}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 366.0, "09:00h": 350.0}, "daily": 358}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 138.0, "09:00h": 243.0}, "daily": 190}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 262.0, "09:00h": 163.0}, "daily": 212}, "Gabriely Martins Da Silva": {"hours": {"08:00h": 383.0, "09:00h": 295.0}, "daily": 339}, "Erica Maria Dos Santos": {"hours": {"08:00h": 202.0, "09:00h": 178.0}, "daily": 190}, "Denis Miranda Torres": {"hours": {"08:00h": 305.0, "09:00h": 339.0}, "daily": 322}, "Bruna Adriana Theodoro": {"hours": {"08:00h": 335.0, "09:00h": 331.0}, "daily": 333}, "Barbara Florenca Silva": {"hours": {"08:00h": 362.0, "09:00h": 365.0}, "daily": 364}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"09:00h": 355.0}, "daily": 355}, "Rafaella De Bessas Silva": {"hours": {"09:00h": 326.0}, "daily": 326}, "Girlene Ferreira Dos Santos": {"hours": {"09:00h": 449.0}, "daily": 449}, "Camily Vitoria Silva": {"hours": {"09:00h": 264.0}, "daily": 264}}, "15/05": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 340.0, "03:00h": 383.0, "08:00h": 257.0, "09:00h": 311.0, "10:00h": 195.0}, "daily": 298.0}, "Denis Miranda Torres": {"hours": {"02:00h": 407.0, "03:00h": 440.0, "08:00h": 330.0, "09:00h": 309.0}, "daily": 341.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 372.0, "03:00h": 377.0}, "daily": 348.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 423.0, "03:00h": 368.0, "08:00h": 356.0, "09:00h": 407.0, "10:00h": 363.0}, "daily": 350.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 287.0, "03:00h": 260.0, "10:00h": 257.0}, "daily": 228.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 359.0, "03:00h": 343.0}, "daily": 316.0}, "Samara Santos Barbosa": {"hours": {"02:00h": 364.0, "03:00h": 366.0, "09:00h": 298.0, "10:00h": 369.0}, "daily": 333.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 327.0, "03:00h": 367.0, "08:00h": 464.0, "09:00h": 502.0}, "daily": 373.0}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 239.0, "03:00h": 225.0, "09:00h": 343.0}, "daily": 185.0}, "Benjamin Batista": {"hours": {"02:00h": 273.0, "03:00h": 304.0}, "daily": 256.0}, "Ingrid De Assis Nascimento": {"hours": {"08:00h": 351.0}, "daily": 351}, "Yasmin Silva": {"hours": {"08:00h": 392.0, "09:00h": 420.0, "10:00h": 204.0}, "daily": 258.0}, "Girlene Ferreira Dos Santos": {"hours": {"08:00h": 275.0, "09:00h": 323.0, "10:00h": 343.0}, "daily": 311.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 260.0, "09:00h": 263.0, "10:00h": 290.0}, "daily": 270.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 158.0, "09:00h": 232.0, "10:00h": 214.0}, "daily": 211.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 264.0, "09:00h": 314.0, "10:00h": 230.0}, "daily": 278.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 295.0, "09:00h": 280.0, "10:00h": 147.0}, "daily": 236.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 326.0, "09:00h": 245.0, "10:00h": 119.0}, "daily": 203.0}, "Gabriely Martins Da Silva": {"hours": {"08:00h": 410.0, "09:00h": 219.0, "10:00h": 304.0}, "daily": 296.0}, "Taylany Souza Lima": {"hours": {"08:00h": 303.0, "09:00h": 257.0, "10:00h": 156.0}, "daily": 226.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 160.0, "09:00h": 236.0, "10:00h": 131.0}, "daily": 179.0}, "Joicy Eugenia Gomes": {"hours": {"10:00h": 217.0}, "daily": 217}, "Debora Correa Dos Santos": {"hours": {"10:00h": 134.0}, "daily": 134}, "Jaqueline Neves": {"hours": {"10:00h": 178.0}, "daily": 164.0}}, "16/05": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 332.0, "03:00h": 376.0, "04:00h": 343.0, "08:00h": 286.0, "09:00h": 298.0}, "daily": 323.0}, "Denis Miranda Torres": {"hours": {"02:00h": 332.0, "03:00h": 382.0, "04:00h": 331.0, "08:00h": 236.0, "09:00h": 267.0}, "daily": 301.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 352.0, "03:00h": 447.0, "04:00h": 354.0}, "daily": 359.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 336.0, "03:00h": 432.0, "04:00h": 340.0, "08:00h": 323.0, "09:00h": 308.0}, "daily": 341.0}, "Benjamin Batista": {"hours": {"02:00h": 235.0, "03:00h": 240.0, "04:00h": 255.0, "08:00h": 297.0, "09:00h": 342.0}, "daily": 252.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 320.0, "03:00h": 407.0, "04:00h": 353.0, "08:00h": 280.0, "09:00h": 245.0}, "daily": 304.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 232.0, "03:00h": 307.0, "04:00h": 332.0, "08:00h": 299.0, "09:00h": 350.0}, "daily": 296.0}, "Herminia Francisco Amaral": {"hours": {"04:00h": 72.0}, "daily": 100.0}, "Yasmin Silva": {"hours": {"08:00h": 248.0, "09:00h": 236.0}, "daily": 225.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 232.0, "09:00h": 334.0}, "daily": 291.0}, "Taylany Souza Lima": {"hours": {"08:00h": 246.0, "09:00h": 164.0}, "daily": 177.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 181.0, "09:00h": 199.0}, "daily": 178.0}, "Katia Lourrany De Souza": {"hours": {"09:00h": 231.0}, "daily": 231.0}}, "17/05": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 229.0, "03:00h": 311.0, "04:00h": 286.0}, "daily": 275}, "Kaua Batista Faria": {"hours": {"02:00h": 236.0, "03:00h": 274.0}, "daily": 255}, "Eduarda Yasmim E Souza": {"hours": {"02:00h": 222.0, "03:00h": 240.0, "04:00h": 246.0}, "daily": 236}, "Debora Correa Dos Santos": {"hours": {"02:00h": 187.0, "03:00h": 338.0, "04:00h": 292.0}, "daily": 272}}, "18/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 171.0, "03:00h": 306.0, "04:00h": 261.0}, "daily": 246}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 381.0, "03:00h": 306.0, "04:00h": 221.0}, "daily": 303}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 246.0, "03:00h": 325.0, "04:00h": 164.0}, "daily": 245}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 179.0, "03:00h": 238.0, "04:00h": 234.0}, "daily": 217}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 270.0, "03:00h": 270.0, "04:00h": 262.0}, "daily": 267}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 355.0, "03:00h": 373.0, "04:00h": 238.0}, "daily": 322}, "Hechila Goncalves De Sousa Lima": {"hours": {"02:00h": 193.0, "03:00h": 214.0, "04:00h": 133.0}, "daily": 180}, "Eduarda Yasmim E Souza": {"hours": {"02:00h": 195.0, "03:00h": 165.0, "04:00h": 74.0}, "daily": 145}, "Denis Miranda Torres": {"hours": {"02:00h": 276.0, "03:00h": 232.0, "04:00h": 178.0}, "daily": 229}, "Benjamin Batista": {"hours": {"02:00h": 230.0, "03:00h": 334.0, "04:00h": 238.0}, "daily": 267}, "Ananda Soares Da Silva": {"hours": {"02:00h": 198.0, "03:00h": 174.0, "04:00h": 118.0}, "daily": 163}, "Alberth Santos Silveira": {"hours": {"02:00h": 197.0, "03:00h": 226.0, "04:00h": 131.0}, "daily": 185}, "Gabriel De Freitas Goncalves": {"hours": {"03:00h": 292.0, "04:00h": 74.0}, "daily": 183}, "Vinicius Carvalho Araujo": {"hours": {"04:00h": 195.0}, "daily": 195}, "Erica Maria Dos Santos": {"hours": {"04:00h": 152.0}, "daily": 152}}, "19/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 267.0, "03:00h": 289.0, "04:00h": 194.0}, "daily": 253.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 264.0, "03:00h": 291.0, "04:00h": 233.0, "08:00h": 361.0, "09:00h": 427.0, "10:00h": 202.0}, "daily": 298.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 403.0, "03:00h": 367.0, "04:00h": 295.0}, "daily": 354.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 315.0, "03:00h": 351.0, "04:00h": 251.0, "09:00h": 486.0, "10:00h": 344.0}, "daily": 344.0}, "Herminia Francisco Amaral": {"hours": {"02:00h": 283.0, "03:00h": 200.0}, "daily": 199.0}, "Denis Miranda Torres": {"hours": {"02:00h": 287.0, "03:00h": 227.0, "04:00h": 189.0, "08:00h": 338.0, "09:00h": 342.0, "10:00h": 193.0}, "daily": 279.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 426.0, "03:00h": 325.0}, "daily": 158.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 211.0, "08:00h": 290.0, "09:00h": 400.0, "10:00h": 402.0}, "daily": 319.0}, "Leilane Vieira Do Nascimento": {"hours": {"04:00h": 115.0, "08:00h": 372.0, "09:00h": 365.0}, "daily": 317.0}, "Erica Maria Dos Santos": {"hours": {"04:00h": 67.0}, "daily": 67}, "Joicy Eugenia Gomes": {"hours": {"08:00h": 375.0, "09:00h": 397.0, "10:00h": 321.0}, "daily": 349.0}, "Yasmin Silva": {"hours": {"08:00h": 463.0, "09:00h": 394.0, "10:00h": 133.0}, "daily": 288.0}, "Girlene Ferreira Dos Santos": {"hours": {"08:00h": 366.0, "09:00h": 408.0, "10:00h": 276.0}, "daily": 370.0}, "Yane Graziely Cizoski Brasil": {"hours": {"08:00h": 161.0}, "daily": 161}, "Luana Coutinho Garcia": {"hours": {"08:00h": 312.0, "10:00h": 216.0}, "daily": 244.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 294.0, "09:00h": 289.0, "10:00h": 200.0}, "daily": 256.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 354.0, "09:00h": 358.0, "10:00h": 251.0}, "daily": 332.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 361.0, "09:00h": 352.0, "10:00h": 226.0}, "daily": 267.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 331.0, "09:00h": 284.0, "10:00h": 155.0}, "daily": 206.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 313.0, "09:00h": 183.0, "10:00h": 204.0}, "daily": 215.0}, "Izadora Lazaro Ferreira": {"hours": {"09:00h": 302.0, "10:00h": 294.0}, "daily": 278.0}, "Aline Domingues Dos Santos": {"hours": {"09:00h": 154.0}, "daily": 154}}, "20/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 209.0, "03:00h": 321.0}, "daily": 265}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 283.0, "03:00h": 267.0}, "daily": 275}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 349.0, "03:00h": 270.0}, "daily": 310}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 366.0, "03:00h": 331.0}, "daily": 348}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 290.0, "03:00h": 350.0}, "daily": 320}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 243.0, "03:00h": 296.0}, "daily": 270}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 172.0, "03:00h": 220.0}, "daily": 196}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 252.0, "03:00h": 245.0}, "daily": 248}, "Denis Miranda Torres": {"hours": {"02:00h": 310.0, "03:00h": 361.0}, "daily": 336}, "Debora Correa Dos Santos": {"hours": {"02:00h": 252.0, "03:00h": 270.0}, "daily": 261}, "Benjamin Batista": {"hours": {"02:00h": 270.0, "03:00h": 243.0}, "daily": 256}, "Ananda Soares Da Silva": {"hours": {"02:00h": 205.0, "03:00h": 251.0}, "daily": 228}}, "21/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 354.0, "03:00h": 379.0, "04:00h": 285.0}, "daily": 339}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 167.0, "03:00h": 285.0, "04:00h": 241.0}, "daily": 231}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 214.0, "03:00h": 251.0, "04:00h": 264.0}, "daily": 243}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 379.0, "03:00h": 330.0, "04:00h": 280.0}, "daily": 330}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 323.0, "03:00h": 330.0, "04:00h": 258.0}, "daily": 304}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 414.0, "03:00h": 441.0, "04:00h": 418.0}, "daily": 424}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 326.0, "03:00h": 294.0, "04:00h": 266.0}, "daily": 295}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 470.0, "03:00h": 451.0, "04:00h": 378.0}, "daily": 433}, "Gabriel De Freitas Goncalves": {"hours": {"02:00h": 145.0, "03:00h": 241.0, "04:00h": 260.0}, "daily": 215}, "Erica Maria Dos Santos": {"hours": {"02:00h": 397.0, "03:00h": 365.0, "04:00h": 182.0}, "daily": 315}, "Denis Miranda Torres": {"hours": {"02:00h": 363.0, "03:00h": 370.0, "04:00h": 343.0}, "daily": 359}, "Bruna Mirelly Ferreira Almeida": {"hours": {"02:00h": 417.0, "03:00h": 546.0}, "daily": 482}, "Benjamin Batista": {"hours": {"02:00h": 298.0, "03:00h": 269.0, "04:00h": 246.0}, "daily": 271}, "Ananda Soares Da Silva": {"hours": {"02:00h": 212.0, "03:00h": 222.0, "04:00h": 217.0}, "daily": 217}}, "23/05": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 191.0, "03:00h": 261.0, "04:00h": 226.0, "08:00h": 352.0, "09:00h": 225.0}, "daily": 256.0}, "Denis Miranda Torres": {"hours": {"02:00h": 356.0, "03:00h": 410.0, "04:00h": 368.0, "08:00h": 375.0}, "daily": 365.0}, "Jhennifer Eduarda Das Neves Oliveira": {"hours": {"02:00h": 278.0, "03:00h": 226.0, "04:00h": 148.0}, "daily": 189.0}, "Bruna Mirelly Ferreira Almeida": {"hours": {"02:00h": 290.0, "03:00h": 308.0, "04:00h": 352.0}, "daily": 331.0}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 366.0, "03:00h": 330.0, "04:00h": 260.0, "08:00h": 265.0}, "daily": 272.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 306.0, "03:00h": 429.0, "04:00h": 273.0, "08:00h": 197.0, "09:00h": 253.0}, "daily": 328.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 224.0, "03:00h": 262.0, "04:00h": 286.0, "09:00h": 210.0}, "daily": 255.0}, "Benjamin Batista": {"hours": {"02:00h": 412.0, "03:00h": 452.0, "04:00h": 351.0}, "daily": 409.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 432.0, "03:00h": 426.0, "04:00h": 333.0, "09:00h": 57.0}, "daily": 370.0}, "Rafaela Aparecida Dos Santos": {"hours": {"03:00h": 290.0, "04:00h": 181.0}, "daily": 239.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 204.0}, "daily": 204}, "Barbara Florenca Silva": {"hours": {"04:00h": 35.0, "08:00h": 343.0, "09:00h": 409.0}, "daily": 302.0}, "Erica Maria Dos Santos": {"hours": {"04:00h": 187.0, "08:00h": 278.0, "09:00h": 113.0}, "daily": 193.0}, "Jaqueline Neves": {"hours": {"04:00h": 198.0}, "daily": 198}, "Yasmin Silva": {"hours": {"08:00h": 136.0, "09:00h": 75.0}, "daily": 104.0}, "Samara Santos Barbosa": {"hours": {"08:00h": 401.0, "09:00h": 193.0}, "daily": 352.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 403.0, "09:00h": 307.0}, "daily": 347.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 267.0, "09:00h": 253.0}, "daily": 260}, "Katia Lourrany De Souza": {"hours": {"08:00h": 386.0, "09:00h": 41.0}, "daily": 280.0}, "Gabriely Martins Da Silva": {"hours": {"08:00h": 344.0, "09:00h": 161.0}, "daily": 279.0}, "Taylany Souza Lima": {"hours": {"08:00h": 241.0, "09:00h": 122.0}, "daily": 193.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 317.0, "09:00h": 111.0}, "daily": 227.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 253.0, "09:00h": 148.0}, "daily": 232.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"09:00h": 55.0}, "daily": 55}}, "24/05": {"Kaylane Fernanda Silva Santos": {"hours": {"01:40h": 203.0, "02:40h": 366.0, "03:40h": 371.0}, "daily": 313}, "Gabriely Martins Da Silva": {"hours": {"01:40h": 260.0, "02:40h": 400.0, "03:40h": 368.0}, "daily": 343}, "Debora Correa Dos Santos": {"hours": {"01:40h": 256.0, "02:40h": 423.0, "03:40h": 362.0}, "daily": 347}}, "25/05": {"Thiago Ventura Lionel": {"hours": {"02:00h": 262.0, "03:00h": 273.0, "04:00h": 213.0}, "daily": 249}, "Raphael Felipe Silva Gomes": {"hours": {"02:00h": 179.0, "03:00h": 234.0, "04:00h": 211.0}, "daily": 208}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 293.0, "03:00h": 287.0, "04:00h": 284.0}, "daily": 288}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 192.0, "03:00h": 268.0, "04:00h": 199.0}, "daily": 220}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 409.0, "03:00h": 437.0, "04:00h": 426.0}, "daily": 424}, "Lucas Barbosa Da Silva": {"hours": {"02:00h": 201.0, "03:00h": 218.0, "04:00h": 197.0}, "daily": 205}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 234.0, "03:00h": 260.0, "04:00h": 322.0}, "daily": 272}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 227.0, "03:00h": 316.0, "04:00h": 322.0}, "daily": 288}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 198.0, "03:00h": 162.0, "04:00h": 216.0}, "daily": 192}, "Denis Miranda Torres": {"hours": {"02:00h": 188.0, "03:00h": 346.0, "04:00h": 277.0}, "daily": 270}, "Benjamin Batista": {"hours": {"02:00h": 349.0, "03:00h": 400.0, "04:00h": 326.0}, "daily": 358}, "Samara Santos Barbosa": {"hours": {"04:00h": 249.0}, "daily": 249}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 404.0}, "daily": 404}, "Erica Maria Dos Santos": {"hours": {"04:00h": 212.0}, "daily": 212}, "Barbara Florenca Silva": {"hours": {"04:00h": 110.0}, "daily": 110}}, "26/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 269.0, "03:00h": 263.0}, "daily": 266}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 367.0, "03:00h": 421.0}, "daily": 394}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 274.0, "03:00h": 209.0}, "daily": 242}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 238.0, "03:00h": 290.0}, "daily": 264}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 389.0, "03:00h": 400.0}, "daily": 394}, "Kaua Batista Faria": {"hours": {"02:00h": 288.0, "03:00h": 294.0}, "daily": 291}, "Thiago Ventura Lionel": {"hours": {"03:00h": 261.0}, "daily": 261}, "Raphael Felipe Silva Gomes": {"hours": {"03:00h": 209.0}, "daily": 209}, "Raissa Goncalves Lopes": {"hours": {"03:00h": 192.0}, "daily": 192}}, "27/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 287.0, "03:00h": 352.0, "04:00h": 254.0, "08:00h": 184.0, "09:00h": 355.0}, "daily": 299.0}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 262.0, "03:00h": 317.0, "04:00h": 240.0, "08:00h": 312.0, "09:00h": 239.0}, "daily": 275.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 329.0, "03:00h": 304.0, "04:00h": 286.0, "08:00h": 375.0, "09:00h": 390.0}, "daily": 318.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 368.0, "03:00h": 389.0, "04:00h": 329.0}, "daily": 353.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 309.0, "03:00h": 420.0, "04:00h": 382.0}, "daily": 353.0}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 274.0, "03:00h": 244.0, "04:00h": 241.0, "08:00h": 335.0, "09:00h": 378.0}, "daily": 285.0}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 205.0, "03:00h": 274.0, "04:00h": 175.0, "08:00h": 179.0, "09:00h": 221.0}, "daily": 204.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 337.0, "03:00h": 342.0, "04:00h": 266.0, "08:00h": 324.0, "09:00h": 313.0}, "daily": 306.0}, "Denis Miranda Torres": {"hours": {"02:00h": 311.0, "03:00h": 345.0, "04:00h": 375.0, "08:00h": 316.0, "09:00h": 297.0}, "daily": 329.0}, "Benjamin Batista": {"hours": {"02:00h": 264.0, "03:00h": 276.0, "04:00h": 202.0, "08:00h": 363.0, "09:00h": 388.0}, "daily": 284.0}, "Erica Maria Dos Santos": {"hours": {"03:00h": 184.0, "04:00h": 238.0, "08:00h": 262.0, "09:00h": 101.0}, "daily": 190.0}, "Debora Correa Dos Santos": {"hours": {"03:00h": 255.0, "04:00h": 222.0}, "daily": 228.0}, "Joicy Eugenia Gomes": {"hours": {"08:00h": 329.0, "09:00h": 336.0}, "daily": 333.0}, "Barbara Florenca Silva": {"hours": {"08:00h": 281.0, "09:00h": 286.0}, "daily": 266.0}, "Yasmin Silva": {"hours": {"08:00h": 317.0, "09:00h": 189.0}, "daily": 260.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 340.0, "09:00h": 250.0}, "daily": 269.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 341.0, "09:00h": 292.0}, "daily": 320.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 302.0, "09:00h": 285.0}, "daily": 293.0}, "Taylany Souza Lima": {"hours": {"08:00h": 206.0, "09:00h": 149.0}, "daily": 178.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 287.0, "09:00h": 159.0}, "daily": 209.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 207.0, "09:00h": 207.0}, "daily": 207.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {}, "daily": 212.0}}, "28/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 371.0, "03:00h": 395.0}, "daily": 395.0}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 195.0, "03:00h": 298.0, "08:00h": 276.0, "09:00h": 300.0, "10:00h": 257.0}, "daily": 264.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 359.0, "03:00h": 370.0}, "daily": 336.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 341.0, "03:00h": 344.0, "08:00h": 387.0, "09:00h": 387.0}, "daily": 350.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 446.0, "03:00h": 453.0}, "daily": 436.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 483.0, "03:00h": 206.0, "08:00h": 339.0, "09:00h": 339.0}, "daily": 336.0}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 316.0, "03:00h": 351.0, "08:00h": 238.0, "09:00h": 287.0}, "daily": 316.0}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 312.0, "03:00h": 373.0, "08:00h": 323.0, "09:00h": 323.0, "10:00h": 171.0}, "daily": 268.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 247.0, "03:00h": 306.0, "08:00h": 369.0, "09:00h": 353.0, "10:00h": 220.0}, "daily": 306.0}, "Denis Miranda Torres": {"hours": {"02:00h": 305.0, "03:00h": 278.0, "08:00h": 250.0, "09:00h": 196.0}, "daily": 276.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 355.0, "03:00h": 300.0, "08:00h": 310.0, "09:00h": 297.0, "10:00h": 169.0}, "daily": 285.0}, "Benjamin Batista": {"hours": {"02:00h": 269.0, "03:00h": 287.0, "08:00h": 411.0, "09:00h": 411.0, "10:00h": 265.0}, "daily": 303.0}, "Ingrid De Assis Nascimento": {"hours": {"03:00h": 319.0}, "daily": 307.0}, "Erica Maria Dos Santos": {"hours": {"03:00h": 274.0, "08:00h": 328.0, "09:00h": 338.0}, "daily": 306.0}, "Barbara Florenca Silva": {"hours": {"03:00h": 154.0, "08:00h": 292.0, "09:00h": 392.0}, "daily": 282.0}, "Jaqueline Neves": {"hours": {"03:00h": 155.0}, "daily": 155}, "Yasmin Silva": {"hours": {"08:00h": 190.0, "09:00h": 398.0, "10:00h": 192.0}, "daily": 230.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 278.0, "09:00h": 300.0, "10:00h": 214.0}, "daily": 271.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 257.0, "09:00h": 257.0, "10:00h": 131.0}, "daily": 205.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 275.0, "09:00h": 275.0, "10:00h": 203.0}, "daily": 268.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 343.0, "09:00h": 274.0, "10:00h": 171.0}, "daily": 290.0}, "Taylany Souza Lima": {"hours": {"08:00h": 187.0, "09:00h": 136.0, "10:00h": 148.0}, "daily": 169.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 278.0, "09:00h": 375.0, "10:00h": 233.0}, "daily": 269.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"08:00h": 226.0, "09:00h": 260.0}, "daily": 236.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 219.0, "09:00h": 172.0, "10:00h": 186.0}, "daily": 201.0}, "Joicy Eugenia Gomes": {"hours": {"10:00h": 220.0}, "daily": 220.0}, "Vitor Bryan Cruz Santos": {"hours": {"10:00h": 112.0}, "daily": 112.0}, "Hebert Henrique Gontijo": {"hours": {"10:00h": 199.0}, "daily": 199.0}, "Rafaella De Bessas Silva": {"hours": {"10:00h": 102.0}, "daily": 102}, "Stefanie Oliveira Fernandes Tavares": {"hours": {}, "daily": 197.0}}, "29/05": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 263.0, "03:00h": 305.0, "04:00h": 259.0, "08:00h": 292.0, "09:00h": 307.0}, "daily": 276.0}, "Denis Miranda Torres": {"hours": {"02:00h": 370.0, "03:00h": 390.0, "04:00h": 385.0, "08:00h": 257.0, "09:00h": 346.0}, "daily": 353.0}, "Samara Santos Barbosa": {"hours": {"02:00h": 319.0, "03:00h": 380.0, "04:00h": 368.0}, "daily": 365.0}, "Gabriel De Freitas Goncalves": {"hours": {"02:00h": 267.0, "03:00h": 312.0, "04:00h": 217.0}, "daily": 268.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 509.0, "03:00h": 460.0, "04:00h": 433.0}, "daily": 457.0}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 341.0, "03:00h": 423.0, "04:00h": 361.0, "08:00h": 47.0}, "daily": 334.0}, "Benjamin Batista": {"hours": {"02:00h": 342.0, "03:00h": 372.0, "04:00h": 316.0, "08:00h": 301.0, "09:00h": 407.0}, "daily": 347.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 332.0, "03:00h": 372.0, "04:00h": 341.0}, "daily": 314.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 307.0, "03:00h": 377.0, "04:00h": 341.0, "08:00h": 282.0, "09:00h": 417.0}, "daily": 339.0}, "Thiago Ventura Lionel": {"hours": {"02:00h": 319.0, "03:00h": 276.0, "04:00h": 245.0}, "daily": 254.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"03:00h": 295.0, "04:00h": 330.0}, "daily": 238.0}, "Ingrid De Assis Nascimento": {"hours": {"04:00h": 280.0}, "daily": 280}, "Erica Maria Dos Santos": {"hours": {"04:00h": 204.0}, "daily": 146.0}, "Barbara Florenca Silva": {"hours": {"08:00h": 315.0, "09:00h": 417.0}, "daily": 358.0}, "Yasmin Silva": {"hours": {"08:00h": 268.0, "09:00h": 311.0}, "daily": 302.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 258.0, "09:00h": 367.0}, "daily": 309.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 351.0, "09:00h": 354.0}, "daily": 334.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 322.0, "09:00h": 321.0}, "daily": 263.0}, "Taylany Souza Lima": {"hours": {"08:00h": 214.0, "09:00h": 284.0}, "daily": 229.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 243.0, "09:00h": 287.0}, "daily": 246.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 274.0, "09:00h": 304.0}, "daily": 265.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"08:00h": 268.0, "09:00h": 298.0}, "daily": 282.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 224.0, "09:00h": 318.0}, "daily": 277.0}, "Joicy Eugenia Gomes": {"hours": {"09:00h": 382.0}, "daily": 330.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {}, "daily": 87.0}, "Izadora Lazaro Ferreira": {"hours": {}, "daily": 218.0}, "Rafaella De Bessas Silva": {"hours": {}, "daily": 255.0}, "Emanuella Sinelandia De Lima": {"hours": {}, "daily": 170.0}, "Jaqueline Neves": {"hours": {}, "daily": 174.0}, "Alberth Santos Silveira": {"hours": {}, "daily": 364.0}}, "30/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 245.0, "03:00h": 245.0}, "daily": 245}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 372.0, "03:00h": 372.0, "04:00h": 286.0, "08:00h": 310.0, "09:00h": 363.0}, "daily": 329.0}, "Raphael Felipe Silva Gomes": {"hours": {"02:00h": 201.0, "03:00h": 201.0}, "daily": 201.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 180.0, "03:00h": 180.0, "04:00h": 243.0, "08:00h": 312.0, "09:00h": 456.0}, "daily": 287.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 445.0, "03:00h": 445.0, "04:00h": 320.0}, "daily": 374.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 431.0, "03:00h": 431.0, "04:00h": 342.0}, "daily": 383.0}, "Leilane Vieira Do Nascimento": {"hours": {"02:00h": 203.0, "03:00h": 203.0, "04:00h": 249.0}, "daily": 214.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 376.0, "03:00h": 376.0, "04:00h": 350.0, "08:00h": 311.0, "09:00h": 324.0}, "daily": 350.0}, "Benjamin Batista": {"hours": {"02:00h": 415.0, "03:00h": 415.0, "04:00h": 372.0, "08:00h": 375.0, "09:00h": 401.0}, "daily": 409.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 304.0}, "daily": 304}, "Debora Correa Dos Santos": {"hours": {"04:00h": 256.0}, "daily": 232.0}, "Barbara Florenca Silva": {"hours": {"08:00h": 305.0, "09:00h": 400.0}, "daily": 344.0}, "Yasmin Silva": {"hours": {"08:00h": 353.0, "09:00h": 311.0}, "daily": 332.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 326.0, "09:00h": 357.0}, "daily": 339.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 249.0, "09:00h": 256.0}, "daily": 252.0}, "Taylany Souza Lima": {"hours": {"08:00h": 286.0, "09:00h": 253.0}, "daily": 270.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 287.0, "09:00h": 209.0}, "daily": 249.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"08:00h": 257.0, "09:00h": 237.0}, "daily": 250.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 238.0, "09:00h": 216.0}, "daily": 227.0}}, "31/05": {"Raquel De Oliveira Rufino": {"hours": {"01:40h": 340.0, "02:40h": 376.0, "03:40h": 365.0}, "daily": 360}, "Kaylane Fernanda Silva Santos": {"hours": {"01:40h": 240.0, "02:40h": 318.0, "03:40h": 302.0}, "daily": 287}, "Gabriely Martins Da Silva": {"hours": {"01:40h": 337.0, "02:40h": 426.0, "03:40h": 345.0}, "daily": 369}}, "01/06": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 357.0, "03:00h": 258.0, "04:00h": 152.0}, "daily": 256}, "Samara Santos Barbosa": {"hours": {"02:00h": 417.0, "03:00h": 450.0, "04:00h": 333.0}, "daily": 400}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 468.0, "03:00h": 454.0, "04:00h": 263.0}, "daily": 395}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 359.0, "03:00h": 410.0, "04:00h": 368.0}, "daily": 379}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 511.0, "03:00h": 368.0, "04:00h": 245.0}, "daily": 375}, "Jhennifer Eduarda Das Neves Oliveira": {"hours": {"02:00h": 271.0, "03:00h": 243.0, "04:00h": 118.0}, "daily": 211}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 247.0, "03:00h": 242.0, "04:00h": 239.0}, "daily": 243}, "Gabriel Henrique Guimaraes Azevedo Sader": {"hours": {"02:00h": 301.0, "03:00h": 345.0, "04:00h": 345.0}, "daily": 330}, "Denis Miranda Torres": {"hours": {"02:00h": 377.0, "03:00h": 401.0, "04:00h": 311.0}, "daily": 363}, "Erica Maria Dos Santos": {"hours": {"04:00h": 199.0}, "daily": 199}, "Bruna Mirelly Ferreira Almeida": {"hours": {"04:00h": 353.0}, "daily": 353}, "Barbara Florenca Silva": {"hours": {"04:00h": 139.0}, "daily": 139}}, "02/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 313.0, "03:00h": 337.0, "04:00h": 314.0}, "daily": 321}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 348.0, "03:00h": 340.0, "04:00h": 257.0, "08:00h": 387.0, "09:00h": 322.0}, "daily": 315}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 269.0, "03:00h": 359.0, "04:00h": 297.0, "09:00h": 355.0, "10:00h": 0.0}, "daily": 308}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 256.0, "03:00h": 292.0, "04:00h": 233.0, "09:00h": 409.0}, "daily": 260}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 432.0, "03:00h": 428.0, "04:00h": 365.0}, "daily": 408}, "Denis Miranda Torres": {"hours": {"02:00h": 337.0, "03:00h": 345.0, "04:00h": 284.0, "08:00h": 364.0, "09:00h": 334.0}, "daily": 322}, "Herminia Francisco Amaral": {"hours": {"03:00h": 123.0, "04:00h": 174.0}, "daily": 148}, "Jhennifer Eduarda Das Neves Oliveira": {"hours": {"04:00h": 161.0}, "daily": 161}, "Bruna Mirelly Ferreira Almeida": {"hours": {"04:00h": 229.0, "08:00h": 360.0, "09:00h": 506.0}, "daily": 365}, "Barbara Florenca Silva": {"hours": {"04:00h": 218.0}, "daily": 218}, "Yasmin Silva": {"hours": {"08:00h": 449.0, "09:00h": 451.0, "10:00h": 202.0}, "daily": 367}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 236.0, "09:00h": 252.0, "10:00h": 200.0}, "daily": 229}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 298.0, "09:00h": 268.0, "10:00h": 160.0}, "daily": 242}, "Kettly Lorrany Mendonca": {"hours": {"08:00h": 231.0, "09:00h": 258.0, "10:00h": 203.0}, "daily": 231}, "Katia Lourrany De Souza": {"hours": {"08:00h": 377.0, "09:00h": 335.0, "10:00h": 234.0}, "daily": 315}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 332.0, "09:00h": 342.0, "10:00h": 305.0}, "daily": 326}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"08:00h": 311.0, "09:00h": 282.0}, "daily": 296}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 319.0, "09:00h": 332.0, "10:00h": 244.0}, "daily": 298}, "Girlene Ferreira Dos Santos": {"hours": {"08:00h": 428.0, "09:00h": 428.0, "10:00h": 249.0}, "daily": 368}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 366.0, "09:00h": 345.0, "10:00h": 247.0}, "daily": 319}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 260.0}, "daily": 260}, "Taylany Souza Lima": {"hours": {"09:00h": 310.0, "10:00h": 239.0}, "daily": 274}, "Rafaella De Bessas Silva": {"hours": {"10:00h": 195.0}, "daily": 195}, "Joicy Eugenia Gomes": {"hours": {"10:00h": 131.0}, "daily": 131}}, "03/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 323.0, "03:00h": 320.0, "04:00h": 333.0, "09:00h": 335.0}, "daily": 323.0}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 324.0, "03:00h": 317.0, "04:00h": 314.0, "08:00h": 302.0, "09:00h": 330.0, "10:00h": 188.0}, "daily": 304.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 300.0, "03:00h": 260.0, "04:00h": 283.0}, "daily": 251.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 386.0, "03:00h": 394.0, "04:00h": 313.0, "09:00h": 387.0}, "daily": 369.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 468.0, "03:00h": 440.0, "04:00h": 467.0, "09:00h": 389.0}, "daily": 430.0}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 247.0, "03:00h": 285.0, "04:00h": 243.0, "08:00h": 413.0, "09:00h": 379.0, "10:00h": 194.0}, "daily": 290.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 423.0, "03:00h": 446.0, "04:00h": 404.0, "08:00h": 352.0, "09:00h": 352.0}, "daily": 377.0}, "Denis Miranda Torres": {"hours": {"02:00h": 388.0, "03:00h": 433.0, "04:00h": 425.0, "08:00h": 265.0, "09:00h": 287.0}, "daily": 357.0}, "Debora Correa Dos Santos": {"hours": {"03:00h": 276.0, "04:00h": 306.0, "09:00h": 96.0}, "daily": 273.0}, "Yasmin Silva": {"hours": {"08:00h": 510.0, "09:00h": 311.0}, "daily": 383.0}, "Girlene Ferreira Dos Santos": {"hours": {"08:00h": 388.0, "09:00h": 335.0}, "daily": 375.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 280.0, "09:00h": 292.0, "10:00h": 165.0}, "daily": 273.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 344.0, "09:00h": 343.0}, "daily": 344.0}, "Benjamin Batista": {"hours": {"08:00h": 420.0, "09:00h": 410.0}, "daily": 412.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 296.0, "09:00h": 283.0, "10:00h": 28.0}, "daily": 273.0}, "Taylany Souza Lima": {"hours": {"08:00h": 278.0, "09:00h": 270.0, "10:00h": 126.0}, "daily": 256.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 234.0, "09:00h": 229.0, "10:00h": 78.0}, "daily": 203.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 264.0, "09:00h": 273.0, "10:00h": 121.0}, "daily": 250.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"08:00h": 323.0, "09:00h": 344.0}, "daily": 334.0}, "Joicy Eugenia Gomes": {"hours": {"09:00h": 337.0, "10:00h": 164.0}, "daily": 308.0}, "Barbara Florenca Silva": {"hours": {"09:00h": 99.0}, "daily": 102.0}, "Giovanna Marya Santana Silva": {"hours": {"09:00h": 190.0, "10:00h": 20.0}, "daily": 171.0}, "Rafaella De Bessas Silva": {"hours": {"09:00h": 138.0, "10:00h": 4.0}, "daily": 43.0}, "Jaqueline Neves": {"hours": {"09:00h": 132.0, "10:00h": 64.0}, "daily": 106.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {}, "daily": 163.0}, "Erica Maria Dos Santos": {"hours": {}, "daily": 203.0}}, "04/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 275.0, "03:00h": 259.0}, "daily": 267}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 288.0, "03:00h": 388.0}, "daily": 338}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 295.0}, "daily": 295}, "Larissa Carvalho Sousa": {"hours": {"02:00h": 346.0, "03:00h": 394.0}, "daily": 370}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 282.0, "03:00h": 309.0}, "daily": 296}, "Herminia Francisco Amaral": {"hours": {"02:00h": 309.0, "03:00h": 231.0}, "daily": 270}, "Emanuella Sinelandia De Lima": {"hours": {"02:00h": 154.0, "03:00h": 291.0}, "daily": 222}, "Denis Miranda Torres": {"hours": {"02:00h": 264.0, "03:00h": 391.0}, "daily": 328}}, "05/06": {"Ingrid De Assis Nascimento": {"hours": {"02:00h": 399.0, "03:00h": 409.0}, "daily": 404}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 222.0, "03:00h": 289.0, "04:00h": 265.0, "08:00h": 318.0, "09:00h": 272.0}, "daily": 268.0}, "Denis Miranda Torres": {"hours": {"02:00h": 403.0, "03:00h": 380.0, "04:00h": 300.0, "09:00h": 237.0}, "daily": 333.0}, "Jhennifer Eduarda Das Neves Oliveira": {"hours": {"02:00h": 317.0, "03:00h": 367.0, "04:00h": 214.0}, "daily": 256.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 251.0, "03:00h": 360.0, "04:00h": 246.0}, "daily": 238.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 421.0, "03:00h": 367.0, "04:00h": 371.0}, "daily": 381.0}, "Samara Santos Barbosa": {"hours": {"02:00h": 390.0, "03:00h": 376.0, "04:00h": 353.0}, "daily": 356.0}, "Larissa Carvalho Sousa": {"hours": {"02:00h": 304.0, "03:00h": 272.0, "04:00h": 188.0, "08:00h": 399.0, "09:00h": 332.0}, "daily": 296.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 442.0, "03:00h": 407.0, "04:00h": 291.0, "08:00h": 378.0, "09:00h": 364.0}, "daily": 377.0}, "Benjamin Batista": {"hours": {"02:00h": 327.0, "03:00h": 364.0, "04:00h": 291.0, "08:00h": 390.0, "09:00h": 335.0}, "daily": 332.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 371.0, "03:00h": 381.0, "04:00h": 233.0}, "daily": 295.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 437.0, "03:00h": 386.0, "04:00h": 255.0}, "daily": 309.0}, "Emanuella Sinelandia De Lima": {"hours": {"02:00h": 303.0, "03:00h": 259.0, "04:00h": 219.0, "09:00h": 220.0}, "daily": 211.0}, "Alberth Santos Silveira": {"hours": {"02:00h": 441.0, "04:00h": 338.0}, "daily": 390}, "Herminia Francisco Amaral": {"hours": {"03:00h": 188.0}, "daily": 188.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 163.0, "09:00h": 261.0}, "daily": 242.0}, "Barbara Florenca Silva": {"hours": {"04:00h": 188.0, "08:00h": 443.0, "09:00h": 371.0}, "daily": 314.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"04:00h": 178.0, "08:00h": 333.0, "09:00h": 332.0}, "daily": 245.0}, "Jaqueline Neves": {"hours": {"04:00h": 169.0}, "daily": 165.0}, "Erica Maria Dos Santos": {"hours": {"08:00h": 350.0, "09:00h": 312.0}, "daily": 330.0}, "Yasmin Silva": {"hours": {"08:00h": 276.0, "09:00h": 235.0}, "daily": 204.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 379.0, "09:00h": 261.0}, "daily": 307.0}, "Leilane Vieira Do Nascimento": {"hours": {"08:00h": 384.0, "09:00h": 363.0}, "daily": 372.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 356.0, "09:00h": 338.0}, "daily": 346.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 313.0, "09:00h": 270.0}, "daily": 265.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 357.0, "09:00h": 267.0}, "daily": 301.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 251.0, "09:00h": 238.0}, "daily": 242.0}, "Giovanna Marya Santana Silva": {"hours": {"09:00h": 222.0}, "daily": 198.0}, "Aline Domingues Dos Santos": {"hours": {"09:00h": 202.0}, "daily": 170.0}}, "06/06": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 263.0, "03:00h": 214.0, "04:00h": 87.0, "07:00h": 226.0, "08:00h": 325.0, "09:00h": 212.0}, "daily": 236.0}, "Denis Miranda Torres": {"hours": {"02:00h": 318.0, "03:00h": 301.0, "04:00h": 183.0, "07:00h": 285.0, "08:00h": 334.0, "09:00h": 402.0}, "daily": 303.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 241.0, "03:00h": 271.0, "04:00h": 201.0}, "daily": 225.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 343.0, "03:00h": 323.0, "04:00h": 209.0, "07:00h": 280.0, "08:00h": 372.0, "09:00h": 404.0}, "daily": 325.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 274.0, "03:00h": 348.0, "04:00h": 218.0, "08:00h": 401.0, "09:00h": 313.0}, "daily": 290.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 224.0, "03:00h": 152.0, "04:00h": 123.0, "07:00h": 223.0, "08:00h": 318.0, "09:00h": 162.0}, "daily": 224.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 313.0, "03:00h": 320.0, "04:00h": 156.0, "07:00h": 324.0, "08:00h": 340.0, "09:00h": 365.0}, "daily": 298.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"03:00h": 304.0, "04:00h": 213.0, "09:00h": 120.0}, "daily": 247.0}, "Erica Maria Dos Santos": {"hours": {"03:00h": 235.0, "04:00h": 262.0}, "daily": 233.0}, "Lucas Barbosa Da Silva": {"hours": {"03:00h": 215.0, "04:00h": 129.0}, "daily": 184.0}, "Jaqueline Neves": {"hours": {"03:00h": 294.0, "04:00h": 215.0, "09:00h": 63.0}, "daily": 177.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"04:00h": 119.0, "07:00h": 261.0, "08:00h": 289.0, "09:00h": 252.0}, "daily": 258.0}, "Emanuella Sinelandia De Lima": {"hours": {"04:00h": 53.0}, "daily": 30.0}, "Yasmin Silva": {"hours": {"07:00h": 393.0, "08:00h": 324.0, "09:00h": 141.0}, "daily": 270.0}, "Karla Franciscani Goncalves": {"hours": {"07:00h": 348.0, "08:00h": 374.0, "09:00h": 427.0}, "daily": 379.0}, "Katia Lourrany De Souza": {"hours": {"07:00h": 281.0, "08:00h": 346.0, "09:00h": 247.0}, "daily": 304.0}, "Leticia Victoria Batista De Oliveira": {"hours": {"07:00h": 224.0, "08:00h": 281.0, "09:00h": 277.0}, "daily": 268.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"07:00h": 268.0, "08:00h": 275.0, "09:00h": 273.0}, "daily": 273.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 357.0}, "daily": 357.0}, "Joicy Eugenia Gomes": {"hours": {"09:00h": 250.0}, "daily": 250.0}, "Barbara Florenca Silva": {"hours": {"09:00h": 285.0}, "daily": 93.0}, "Izadora Lazaro Ferreira": {"hours": {"09:00h": 299.0}, "daily": 299.0}, "Taylany Souza Lima": {"hours": {"09:00h": 301.0}, "daily": 301.0}}, "08/06": {"Thiago Ventura Lionel": {"hours": {"02:00h": 299.0, "03:00h": 246.0, "04:00h": 172.0}, "daily": 239}, "Samara Santos Barbosa": {"hours": {"02:00h": 240.0, "03:00h": 368.0, "04:00h": 314.0}, "daily": 307}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 324.0, "03:00h": 341.0, "04:00h": 373.0}, "daily": 346}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 373.0, "03:00h": 440.0, "04:00h": 335.0}, "daily": 383}, "Jhennifer Eduarda Das Neves Oliveira": {"hours": {"02:00h": 266.0, "03:00h": 176.0, "04:00h": 162.0}, "daily": 201}, "Denis Miranda Torres": {"hours": {"02:00h": 306.0, "03:00h": 349.0, "04:00h": 331.0}, "daily": 329}, "Benjamin Batista": {"hours": {"02:00h": 369.0, "03:00h": 387.0, "04:00h": 301.0}, "daily": 352}, "Gabriel Henrique Guimaraes Azevedo Sader": {"hours": {"03:00h": 267.0, "04:00h": 182.0}, "daily": 224}, "Gabriel De Freitas Goncalves": {"hours": {"03:00h": 242.0, "04:00h": 301.0}, "daily": 272}, "Barbara Florenca Silva": {"hours": {"04:00h": 148.0}, "daily": 148}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"04:00h": 233.0}, "daily": 233}}, "09/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 296.0, "03:00h": 309.0}, "daily": 287.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 289.0, "03:00h": 295.0, "08:00h": 475.0, "09:00h": 497.0}, "daily": 344.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 262.0, "03:00h": 175.0}, "daily": 172.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 250.0, "03:00h": 229.0, "08:00h": 345.0, "09:00h": 450.0}, "daily": 245.0}, "Denis Miranda Torres": {"hours": {"02:00h": 347.0, "03:00h": 343.0, "08:00h": 310.0, "09:00h": 355.0}, "daily": 297.0}, "Marco Tulio Santos Silveira": {"hours": {"03:00h": 274.0}, "daily": 251.0}, "Kaua Batista Faria": {"hours": {"03:00h": 356.0}, "daily": 356}, "Herminia Francisco Amaral": {"hours": {"03:00h": 99.0}, "daily": 104.0}, "Erica Maria Dos Santos": {"hours": {"08:00h": 353.0, "09:00h": 350.0}, "daily": 276.0}, "Girlene Ferreira Dos Santos": {"hours": {"08:00h": 502.0, "09:00h": 516.0}, "daily": 486.0}, "Luana Coutinho Garcia": {"hours": {"08:00h": 297.0, "09:00h": 342.0}, "daily": 296.0}, "Cesar Santos Ramos": {"hours": {"08:00h": 212.0, "09:00h": 346.0}, "daily": 273.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 388.0, "09:00h": 329.0}, "daily": 334.0}, "Gabriel De Freitas Goncalves": {"hours": {"08:00h": 304.0, "09:00h": 349.0}, "daily": 325.0}, "Karla Franciscani Goncalves": {"hours": {"08:00h": 354.0, "09:00h": 415.0}, "daily": 391.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 321.0, "09:00h": 341.0}, "daily": 294.0}, "Taylany Souza Lima": {"hours": {"08:00h": 321.0, "09:00h": 504.0}, "daily": 323.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 198.0, "09:00h": 263.0}, "daily": 233.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"08:00h": 309.0, "09:00h": 349.0}, "daily": 285.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 250.0, "09:00h": 260.0}, "daily": 232.0}, "Joicy Eugenia Gomes": {"hours": {"09:00h": 403.0}, "daily": 307.0}, "Leticia Ferreira Santos": {"hours": {}, "daily": 404.0}, "Barbara Florenca Silva": {"hours": {}, "daily": 198.0}}, "10/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 217.0, "03:00h": 327.0, "04:00h": 145.0, "08:00h": 301.0, "09:00h": 294.0}, "daily": 230}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 271.0, "03:00h": 343.0, "04:00h": 218.0, "08:00h": 270.0, "09:00h": 284.0}, "daily": 277}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 289.0, "03:00h": 387.0, "04:00h": 311.0}, "daily": 329}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 318.0, "03:00h": 375.0, "04:00h": 370.0, "08:00h": 426.0, "09:00h": 484.0}, "daily": 354}, "Kaylane Fernanda Silva Santos": {"hours": {"02:00h": 329.0, "03:00h": 356.0, "04:00h": 375.0, "08:00h": 395.0, "09:00h": 315.0}, "daily": 353}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 335.0, "03:00h": 336.0, "04:00h": 342.0, "08:00h": 357.0, "09:00h": 373.0}, "daily": 338}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 360.0, "03:00h": 452.0, "04:00h": 402.0, "08:00h": 378.0, "09:00h": 371.0}, "daily": 405}, "Denis Miranda Torres": {"hours": {"02:00h": 345.0, "03:00h": 353.0, "04:00h": 318.0, "08:00h": 340.0, "09:00h": 378.0}, "daily": 339}, "Debora Correa Dos Santos": {"hours": {"02:00h": 241.0, "03:00h": 290.0, "04:00h": 221.0, "08:00h": 410.0, "09:00h": 327.0}, "daily": 251}, "Benjamin Batista": {"hours": {"02:00h": 342.0, "03:00h": 365.0, "04:00h": 338.0, "08:00h": 410.0, "09:00h": 396.0}, "daily": 348}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"03:00h": 268.0, "04:00h": 252.0}, "daily": 260}, "Kaua Batista Faria": {"hours": {"04:00h": 339.0}, "daily": 339}, "Jaqueline Neves": {"hours": {"04:00h": 158.0}, "daily": 158}, "Ingrid De Assis Nascimento": {"hours": {"04:00h": 217.0}, "daily": 217}, "Emanuella Sinelandia De Lima": {"hours": {"04:00h": 154.0}, "daily": 154}, "Alberth Santos Silveira": {"hours": {"04:00h": 358.0}, "daily": 358}, "Joicy Eugenia Gomes": {"hours": {"08:00h": 393.0, "09:00h": 396.0}, "daily": 394}, "Girlene Ferreira Dos Santos": {"hours": {"08:00h": 382.0}, "daily": 382}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 345.0, "09:00h": 334.0}, "daily": 340}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 277.0, "09:00h": 285.0}, "daily": 281}, "Lidiane Andrade Araujo": {"hours": {"08:00h": 266.0, "09:00h": 236.0}, "daily": 251}, "Katia Lourrany De Souza": {"hours": {"08:00h": 314.0, "09:00h": 273.0}, "daily": 294}, "Leticia Victoria Batista De Oliveira": {"hours": {"08:00h": 298.0, "09:00h": 307.0}, "daily": 302}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 262.0, "09:00h": 266.0}, "daily": 264}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 240.0, "09:00h": 298.0}, "daily": 269}, "Erika Santos Silva": {"hours": {"08:00h": 251.0, "09:00h": 203.0}, "daily": 227}}, "11/06": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 353.0, "03:00h": 390.0, "04:00h": 289.0, "08:00h": 270.0, "09:00h": 241.0, "10:00h": 198.0}, "daily": 301.0}, "Raissa Goncalves Lopes": {"hours": {"02:00h": 376.0, "03:00h": 348.0, "04:00h": 347.0, "08:00h": 240.0, "09:00h": 247.0}, "daily": 302.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 253.0, "03:00h": 274.0, "04:00h": 290.0}, "daily": 257.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 459.0, "03:00h": 451.0, "04:00h": 408.0, "08:00h": 287.0, "09:00h": 306.0}, "daily": 384.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 395.0, "03:00h": 422.0, "04:00h": 354.0, "08:00h": 390.0, "09:00h": 289.0}, "daily": 360.0}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 394.0, "03:00h": 447.0, "04:00h": 351.0, "08:00h": 282.0, "09:00h": 254.0}, "daily": 341.0}, "Denis Miranda Torres": {"hours": {"02:00h": 367.0, "03:00h": 382.0, "04:00h": 389.0, "08:00h": 286.0, "09:00h": 317.0}, "daily": 362.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 236.0, "03:00h": 292.0, "04:00h": 241.0, "09:00h": 347.0, "10:00h": 242.0}, "daily": 266.0}, "Benjamin Batista": {"hours": {"02:00h": 329.0, "03:00h": 434.0, "08:00h": 358.0, "09:00h": 433.0, "10:00h": 404.0}, "daily": 348.0}, "Samara Santos Barbosa": {"hours": {"03:00h": 244.0, "04:00h": 302.0, "08:00h": 217.0, "09:00h": 346.0, "10:00h": 450.0}, "daily": 300.0}, "Herminia Francisco Amaral": {"hours": {"03:00h": 243.0, "04:00h": 144.0}, "daily": 163.0}, "Gabriel Henrique Guimaraes Azevedo Sader": {"hours": {"03:00h": 237.0, "04:00h": 282.0}, "daily": 250.0}, "Leilane Vieira Do Nascimento": {"hours": {"04:00h": 207.0}, "daily": 207}, "Ingrid De Assis Nascimento": {"hours": {"04:00h": 222.0}, "daily": 222}, "Erica Maria Dos Santos": {"hours": {"04:00h": 176.0, "08:00h": 370.0, "09:00h": 326.0}, "daily": 292.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 255.0, "09:00h": 264.0, "10:00h": 182.0}, "daily": 254.0}, "Giovanna Marya Santana Silva": {"hours": {"08:00h": 211.0, "09:00h": 236.0}, "daily": 188.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 294.0, "09:00h": 266.0, "10:00h": 176.0}, "daily": 248.0}, "Taylany Souza Lima": {"hours": {"08:00h": 265.0, "09:00h": 241.0, "10:00h": 236.0}, "daily": 245.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 214.0, "09:00h": 185.0}, "daily": 153.0}, "Emanuella Sinelandia De Lima": {"hours": {"08:00h": 288.0, "09:00h": 249.0, "10:00h": 172.0}, "daily": 238.0}, "Erika Santos Silva": {"hours": {"08:00h": 260.0, "09:00h": 266.0, "10:00h": 247.0}, "daily": 260.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"09:00h": 359.0}, "daily": 272.0}, "Joicy Eugenia Gomes": {"hours": {"09:00h": 296.0, "10:00h": 172.0}, "daily": 273.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"09:00h": 226.0, "10:00h": 191.0}, "daily": 217.0}}, "12/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 373.0, "03:00h": 419.0, "04:00h": 338.0}, "daily": 377}, "Raquel De Oliveira Rufino": {"hours": {"02:00h": 343.0, "03:00h": 335.0, "04:00h": 289.0}, "daily": 322}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 459.0, "03:00h": 385.0, "04:00h": 453.0}, "daily": 432}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 424.0, "03:00h": 463.0, "04:00h": 389.0}, "daily": 425}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 415.0, "03:00h": 453.0, "04:00h": 397.0}, "daily": 422}, "Gabriely Martins Da Silva": {"hours": {"02:00h": 414.0, "03:00h": 427.0, "04:00h": 371.0}, "daily": 404}, "Emanuella Sinelandia De Lima": {"hours": {"02:00h": 267.0, "03:00h": 311.0, "04:00h": 287.0}, "daily": 288}, "Denis Miranda Torres": {"hours": {"02:00h": 406.0, "03:00h": 424.0, "04:00h": 388.0}, "daily": 406}, "Debora Correa Dos Santos": {"hours": {"02:00h": 250.0, "03:00h": 292.0, "04:00h": 317.0}, "daily": 286}, "Benjamin Batista": {"hours": {"02:00h": 365.0, "03:00h": 401.0, "04:00h": 429.0}, "daily": 398}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 292.0}, "daily": 292}, "Jaqueline Neves": {"hours": {"04:00h": 214.0}, "daily": 214}, "Ingrid De Assis Nascimento": {"hours": {"04:00h": 309.0}, "daily": 309}, "Barbara Florenca Silva": {"hours": {"04:00h": 184.0}, "daily": 184}}, "13/06": {"Raquel De Oliveira Rufino": {"hours": {"02:00h": 334.0, "03:00h": 378.0, "04:00h": 378.0, "08:00h": 173.0, "09:00h": 338.0}, "daily": 336.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 449.0, "03:00h": 429.0, "04:00h": 351.0}, "daily": 357.0}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 334.0, "03:00h": 411.0, "04:00h": 387.0, "08:00h": 261.0, "09:00h": 460.0}, "daily": 396.0}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"02:00h": 340.0, "03:00h": 413.0, "04:00h": 303.0}, "daily": 347.0}, "Denis Miranda Torres": {"hours": {"02:00h": 393.0, "03:00h": 387.0, "04:00h": 327.0, "08:00h": 245.0, "09:00h": 307.0}, "daily": 331.0}, "Debora Correa Dos Santos": {"hours": {"02:00h": 281.0, "03:00h": 310.0, "04:00h": 276.0, "08:00h": 185.0, "09:00h": 222.0}, "daily": 241.0}, "Benjamin Batista": {"hours": {"02:00h": 466.0, "03:00h": 472.0, "04:00h": 360.0, "08:00h": 282.0, "09:00h": 366.0}, "daily": 392.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"04:00h": 329.0, "09:00h": 365.0}, "daily": 294.0}, "Kaua Batista Faria": {"hours": {"04:00h": 413.0}, "daily": 393.0}, "Barbara Florenca Silva": {"hours": {"08:00h": 108.0, "09:00h": 239.0}, "daily": 208.0}, "Katia Lourrany De Souza": {"hours": {"08:00h": 123.0, "09:00h": 336.0}, "daily": 270.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 208.0, "09:00h": 346.0}, "daily": 179.0}, "Tulio Pereira Fernandes De Souza": {"hours": {"08:00h": 218.0, "09:00h": 286.0}, "daily": 267.0}, "Aline Domingues Dos Santos": {"hours": {"08:00h": 158.0, "09:00h": 272.0}, "daily": 201.0}, "Ana Carolina Paiva Barbosa": {"hours": {"08:00h": 126.0, "09:00h": 243.0}, "daily": 216.0}, "Thaemy Sofia Agripino Gomes": {"hours": {"08:00h": 108.0, "09:00h": 153.0}, "daily": 141.0}, "Gabriely Martins Da Silva": {"hours": {"09:00h": 163.0}, "daily": 142.0}, "Gabriel Henrique Guimaraes Azevedo Sader": {"hours": {}, "daily": 232.0}, "Jaqueline Neves": {"hours": {}, "daily": 151.0}}, "14/06": {"Veronica Cristina Da Silva": {"hours": {"02:00h": 149.0, "03:00h": 209.0}, "daily": 179}, "Pedro Geovane Soares": {"hours": {"02:00h": 99.0, "03:00h": 198.0}, "daily": 148}, "Leticia De Oliveira Silva": {"hours": {"02:00h": 70.0, "03:00h": 195.0}, "daily": 132}, "Kaua Batista Faria": {"hours": {"02:00h": 187.0}, "daily": 187}, "Isabele Borges Da Silva": {"hours": {"02:00h": 173.0, "03:00h": 251.0}, "daily": 212}, "Emanuella Sinelandia De Lima": {"hours": {"02:00h": 119.0}, "daily": 119}, "Miroslavia Kenia Santos": {"hours": {"03:00h": 221.0}, "daily": 221}}, "15/06": {"Raquel De Oliveira Rufino": {"hours": {"01:00h": 325.0, "02:00h": 386.0, "03:00h": 372.0}, "daily": 361}, "Pamela De Souza Goncalves": {"hours": {"01:00h": 281.0, "02:00h": 468.0}, "daily": 374}, "Kaylane Fernanda Silva Santos": {"hours": {"01:00h": 352.0, "02:00h": 375.0, "03:00h": 384.0}, "daily": 370}, "Jaqueline Silva Rodrigues Barcelos": {"hours": {"01:00h": 385.0, "02:00h": 393.0, "03:00h": 371.0}, "daily": 383}, "Denis Miranda Torres": {"hours": {"01:00h": 396.0, "02:00h": 412.0, "03:00h": 328.0}, "daily": 379}, "Debora Correa Dos Santos": {"hours": {"01:00h": 297.0, "02:00h": 381.0, "03:00h": 349.0}, "daily": 342}, "Benjamin Batista": {"hours": {"01:00h": 265.0, "02:00h": 329.0, "03:00h": 371.0}, "daily": 322}, "Andrew Alves Batista": {"hours": {"01:00h": 201.0, "02:00h": 212.0, "03:00h": 264.0}, "daily": 226}, "Luana Coutinho Garcia": {"hours": {"02:00h": 363.0, "03:00h": 345.0}, "daily": 354}, "Jaqueline Neves": {"hours": {"03:00h": 232.0}, "daily": 232}, "Gabriely Martins Da Silva": {"hours": {"03:00h": 201.0}, "daily": 201}}};
+const LF={"14/05": {"Bruna Mirelly Ferreira Almeida": {"hours": {"02:00h": 1164.0, "03:00h": 1154.0, "10:00h": 502.0}, "daily": 948.0}, "Bruna Adriana Theodoro": {"hours": {"02:00h": 1243.0, "03:00h": 1422.0, "08:00h": 1450.0, "09:00h": 1397.0}, "daily": 1254.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1264.0, "03:00h": 1263.0, "08:00h": 1121.0, "09:00h": 1429.0}, "daily": 1050.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 988.0, "09:00h": 1212.0, "10:00h": 776.0}, "daily": 1071.0}, "Jaqueline Neves": {"hours": {"08:00h": 1075.0, "09:00h": 1209.0, "10:00h": 834.0}, "daily": 1096.0}, "Joicy Eugenia Gomes": {"hours": {"10:00h": 879.0}, "daily": 879.0}}, "16/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1165.0, "03:00h": 1217.0, "04:00h": 1001.0, "08:00h": 1051.0, "09:00h": 957.0}, "daily": 1062.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 890.0, "03:00h": 1222.0, "04:00h": 873.0, "08:00h": 941.0, "09:00h": 905.0}, "daily": 936.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 971.0, "03:00h": 1012.0}, "daily": 990.0}, "Jaqueline Neves": {"hours": {"02:00h": 1042.0, "03:00h": 1077.0, "04:00h": 873.0, "08:00h": 876.0, "09:00h": 706.0}, "daily": 893.0}, "Bruna Adriana Theodoro": {"hours": {"08:00h": 1149.0, "09:00h": 1040.0}, "daily": 1091.0}, "Joicy Eugenia Gomes": {"hours": {"09:00h": 989.0}, "daily": 989.0}}, "17/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1185.0, "03:00h": 812.0, "04:00h": 1028.0}, "daily": 1008}, "Leticia Ferreira Santos": {"hours": {"02:00h": 1120.0, "03:00h": 1081.0, "04:00h": 1014.0}, "daily": 1072}}, "18/05": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1177.0, "03:00h": 1151.0, "04:00h": 694.0}, "daily": 1007}, "Ingrid De Assis Nascimento": {"hours": {"02:00h": 767.0, "03:00h": 839.0}, "daily": 803}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1309.0, "03:00h": 1178.0, "04:00h": 707.0}, "daily": 1065}, "Barbara Florenca Silva": {"hours": {"02:00h": 1038.0, "03:00h": 1145.0, "04:00h": 574.0}, "daily": 919}, "Pamela De Souza Goncalves": {"hours": {"03:00h": 629.0, "04:00h": 731.0}, "daily": 680}}, "19/05": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 977.0, "03:00h": 770.0, "04:00h": 615.0}, "daily": 804.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 978.0, "03:00h": 1014.0, "04:00h": 363.0, "08:00h": 1341.0, "09:00h": 1112.0, "10:00h": 891.0}, "daily": 1043.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1042.0, "03:00h": 839.0, "04:00h": 103.0, "08:00h": 1297.0, "09:00h": 1439.0, "10:00h": 921.0}, "daily": 1166.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1382.0, "09:00h": 1049.0, "10:00h": 566.0}, "daily": 1030.0}, "Samara Santos Barbosa": {"hours": {"08:00h": 1010.0, "09:00h": 913.0, "10:00h": 927.0}, "daily": 949.0}}, "20/05": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1660.0, "03:00h": 1198.0}, "daily": 1429}, "Jaqueline Neves": {"hours": {"02:00h": 915.0, "03:00h": 758.0}, "daily": 836}, "Bruna Mirelly Ferreira Almeida": {"hours": {"02:00h": 1049.0, "03:00h": 916.0}, "daily": 982}, "Bruna Adriana Theodoro": {"hours": {"02:00h": 1206.0, "03:00h": 1126.0}, "daily": 1166}}, "21/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1538.0, "03:00h": 1367.0, "04:00h": 995.0}, "daily": 1300}, "Jaqueline Neves": {"hours": {"02:00h": 1020.0, "03:00h": 1221.0, "04:00h": 1010.0}, "daily": 1084}, "Bruna Adriana Theodoro": {"hours": {"02:00h": 1189.0, "03:00h": 1178.0, "04:00h": 979.0}, "daily": 1115}, "Barbara Florenca Silva": {"hours": {"02:00h": 1304.0, "03:00h": 1043.0, "04:00h": 800.0}, "daily": 1049}}, "22/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 1243.0, "03:00h": 1256.0, "04:00h": 1087.0, "08:00h": 1046.0}, "daily": 1181.0}, "Jaqueline Neves": {"hours": {"02:00h": 1538.0, "03:00h": 1143.0, "04:00h": 1140.0, "08:00h": 1336.0, "09:00h": 1228.0}, "daily": 1241.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1105.0, "03:00h": 1250.0, "04:00h": 1026.0}, "daily": 1139.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1029.0, "03:00h": 1072.0, "04:00h": 718.0, "08:00h": 1259.0, "09:00h": 1242.0}, "daily": 997.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"08:00h": 1383.0, "09:00h": 1649.0}, "daily": 1612.0}, "Debora Correa Dos Santos": {"hours": {"08:00h": 1217.0, "09:00h": 1193.0}, "daily": 1153.0}, "Rafaela Aparecida Dos Santos": {"hours": {"09:00h": 1515.0}, "daily": 1262.0}}, "23/05": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1543.0, "03:00h": 1035.0, "04:00h": 768.0}, "daily": 1187.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1186.0, "03:00h": 1124.0, "04:00h": 681.0}, "daily": 1017.0}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 1353.0, "03:00h": 1002.0, "04:00h": 746.0, "08:00h": 1321.0, "09:00h": 912.0}, "daily": 1186.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1033.0, "03:00h": 767.0, "04:00h": 974.0}, "daily": 908.0}, "Jaqueline Neves": {"hours": {"03:00h": 947.0, "04:00h": 772.0, "08:00h": 1535.0, "09:00h": 613.0}, "daily": 1115.0}, "Joicy Eugenia Gomes": {"hours": {"08:00h": 934.0, "09:00h": 1129.0}, "daily": 1032}, "Bruna Mirelly Ferreira Almeida": {"hours": {"08:00h": 943.0}, "daily": 757.0}, "Debora Correa Dos Santos": {"hours": {"08:00h": 1427.0, "09:00h": 512.0}, "daily": 1323.0}}, "24/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"01:40h": 1157.0, "02:40h": 1056.0, "03:40h": 1070.0}, "daily": 1094}, "Ingrid De Assis Nascimento": {"hours": {"01:40h": 1065.0, "02:40h": 1269.0, "03:40h": 952.0}, "daily": 1095}}, "25/05": {"Samara Santos Barbosa": {"hours": {"02:00h": 1179.0, "03:00h": 1031.0, "04:00h": 1171.0}, "daily": 1127}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1165.0, "03:00h": 1136.0, "04:00h": 1093.0}, "daily": 1131}, "Erica Maria Dos Santos": {"hours": {"02:00h": 992.0, "03:00h": 1031.0, "04:00h": 1028.0}, "daily": 1017}, "Barbara Florenca Silva": {"hours": {"02:00h": 1135.0, "03:00h": 1086.0, "04:00h": 800.0}, "daily": 1007}}, "26/05": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1197.0, "03:00h": 234.0}, "daily": 716}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1106.0, "03:00h": 543.0}, "daily": 824}, "Barbara Florenca Silva": {"hours": {"02:00h": 1084.0, "03:00h": 720.0}, "daily": 902}}, "27/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1141.0, "03:00h": 1109.0, "04:00h": 1191.0, "08:00h": 1559.0, "09:00h": 1310.0}, "daily": 1190.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1378.0, "03:00h": 1079.0, "04:00h": 1451.0}, "daily": 1320.0}, "Jaqueline Neves": {"hours": {"02:00h": 1140.0, "03:00h": 1055.0, "04:00h": 1050.0}, "daily": 1028.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1363.0, "03:00h": 1169.0, "04:00h": 1115.0}, "daily": 1027.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1345.0, "09:00h": 1205.0}, "daily": 1287.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1333.0, "09:00h": 840.0}, "daily": 1124.0}, "Debora Correa Dos Santos": {"hours": {"08:00h": 1210.0, "09:00h": 975.0}, "daily": 1087.0}}, "28/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1345.0, "03:00h": 1297.0, "08:00h": 1574.0, "09:00h": 1466.0}, "daily": 1333.0}, "Jaqueline Neves": {"hours": {"02:00h": 1088.0, "03:00h": 1244.0}, "daily": 1206.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1175.0, "03:00h": 1038.0}, "daily": 1095.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1520.0, "03:00h": 1024.0}, "daily": 1133.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1366.0, "09:00h": 1362.0}, "daily": 1330.0}, "Pamela De Souza Goncalves": {"hours": {"08:00h": 949.0, "09:00h": 1467.0}, "daily": 1308.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1389.0, "09:00h": 1143.0}, "daily": 1201.0}, "Samara Santos Barbosa": {"hours": {"09:00h": 1384.0}, "daily": 1358.0}}, "29/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1650.0, "03:00h": 1215.0, "04:00h": 1142.0, "08:00h": 1056.0, "09:00h": 1458.0}, "daily": 1236.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1757.0, "03:00h": 1279.0, "04:00h": 872.0}, "daily": 1222.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1255.0, "03:00h": 1095.0, "04:00h": 848.0}, "daily": 1066.0}, "Jaqueline Neves": {"hours": {"02:00h": 1475.0, "03:00h": 1145.0, "04:00h": 1000.0}, "daily": 1160.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1115.0, "09:00h": 1423.0}, "daily": 1308.0}, "Izadora Lazaro Ferreira": {"hours": {"08:00h": 1447.0, "09:00h": 1596.0}, "daily": 1550.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1034.0, "09:00h": 1328.0}, "daily": 1185.0}}, "30/05": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1174.0, "03:00h": 1177.0, "04:00h": 998.0, "08:00h": 2004.0, "09:00h": 1333.0}, "daily": 1195.0}, "Jaqueline Neves": {"hours": {"02:00h": 1471.0, "03:00h": 1026.0, "04:00h": 907.0, "08:00h": 1204.0, "09:00h": 1033.0}, "daily": 1112.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 968.0, "03:00h": 999.0}, "daily": 972.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1383.0, "03:00h": 1071.0, "04:00h": 557.0}, "daily": 1009.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1197.0, "09:00h": 956.0}, "daily": 1093.0}, "Pamela De Souza Goncalves": {"hours": {"08:00h": 1315.0, "09:00h": 1433.0}, "daily": 1360.0}, "Debora Correa Dos Santos": {"hours": {"08:00h": 918.0}, "daily": 918.0}}, "31/05": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"01:40h": 942.0, "02:40h": 1129.0, "03:40h": 1169.0}, "daily": 1080}, "Jaqueline Neves": {"hours": {"01:40h": 806.0, "02:40h": 1021.0, "03:40h": 939.0}, "daily": 922}}, "01/06": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1277.0, "03:00h": 1145.0, "04:00h": 975.0}, "daily": 1132}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1248.0, "03:00h": 1135.0, "04:00h": 1176.0}, "daily": 1186}, "Bruna Mirelly Ferreira Almeida": {"hours": {"02:00h": 1164.0, "03:00h": 1081.0, "04:00h": 1046.0}, "daily": 1097}, "Barbara Florenca Silva": {"hours": {"02:00h": 1264.0, "03:00h": 1037.0, "04:00h": 690.0}, "daily": 997}}, "02/06": {"Bruna Mirelly Ferreira Almeida": {"hours": {"02:00h": 1535.0, "03:00h": 831.0, "04:00h": 782.0}, "daily": 1049}, "Barbara Florenca Silva": {"hours": {"02:00h": 1139.0, "03:00h": 1114.0, "04:00h": 1085.0, "08:00h": 1318.0, "09:00h": 1227.0, "10:00h": 388.0}, "daily": 1113}, "Erica Maria Dos Santos": {"hours": {"03:00h": 912.0, "04:00h": 609.0}, "daily": 760}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1505.0, "09:00h": 1441.0, "10:00h": 140.0}, "daily": 1029}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1364.0, "09:00h": 1013.0}, "daily": 1188}, "Pamela De Souza Goncalves": {"hours": {"08:00h": 1540.0, "09:00h": 1111.0}, "daily": 1326}, "Samara Santos Barbosa": {"hours": {"09:00h": 1072.0}, "daily": 1072}, "Joicy Eugenia Gomes": {"hours": {"10:00h": 794.0}, "daily": 794}, "Keven Viana Dos Santos": {"hours": {"10:00h": 143.0}, "daily": 143}}, "03/06": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1023.0, "03:00h": 1298.0, "04:00h": 851.0}, "daily": 988.0}, "Jaqueline Neves": {"hours": {"02:00h": 1322.0, "03:00h": 1083.0, "04:00h": 914.0, "08:00h": 1512.0, "09:00h": 1169.0}, "daily": 1121.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1096.0, "03:00h": 1106.0, "04:00h": 887.0}, "daily": 1027.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1124.0, "03:00h": 1120.0, "04:00h": 950.0, "08:00h": 1754.0, "09:00h": 1525.0}, "daily": 1204.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1238.0, "09:00h": 897.0}, "daily": 1034.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1389.0, "09:00h": 1082.0}, "daily": 1225.0}, "Matheus Ferreira Carlos De Oliveira": {"hours": {"08:00h": 83.0, "09:00h": 102.0, "10:00h": 150.0}, "daily": 99.0}, "Ingrid De Assis Nascimento": {"hours": {}, "daily": 60.0}}, "04/06": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1096.0, "03:00h": 1064.0}, "daily": 1080}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 1075.0, "03:00h": 1233.0}, "daily": 1154}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1244.0, "03:00h": 1153.0}, "daily": 1198}, "Ingrid De Assis Nascimento": {"hours": {"02:00h": 850.0, "03:00h": 992.0}, "daily": 921}}, "05/06": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1617.0, "03:00h": 1241.0, "04:00h": 996.0}, "daily": 1299.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1209.0, "03:00h": 1300.0, "04:00h": 512.0}, "daily": 1109.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1383.0, "03:00h": 1333.0, "04:00h": 1030.0}, "daily": 1272.0}, "Jaqueline Neves": {"hours": {"02:00h": 1351.0, "03:00h": 1380.0, "04:00h": 979.0, "08:00h": 1135.0, "09:00h": 1223.0}, "daily": 1260.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"08:00h": 1521.0, "09:00h": 1353.0}, "daily": 1418.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1420.0, "09:00h": 1324.0}, "daily": 1370.0}, "Samara Santos Barbosa": {"hours": {"08:00h": 1029.0}, "daily": 1029}, "Taylany Souza Lima": {"hours": {"08:00h": 1443.0, "09:00h": 1231.0}, "daily": 1166.0}}, "06/06": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 989.0, "03:00h": 902.0, "09:00h": 1139.0}, "daily": 1001.0}, "Jaqueline Neves": {"hours": {"02:00h": 890.0, "03:00h": 896.0, "09:00h": 819.0}, "daily": 882.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1062.0, "03:00h": 1001.0}, "daily": 1024.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1028.0, "03:00h": 989.0}, "daily": 800.0}, "Joicy Eugenia Gomes": {"hours": {"07:00h": 1281.0, "08:00h": 1301.0, "09:00h": 1320.0}, "daily": 1295.0}, "Izadora Lazaro Ferreira": {"hours": {"07:00h": 1029.0, "08:00h": 1492.0}, "daily": 1377.0}, "Rafaella De Bessas Silva": {"hours": {"07:00h": 980.0, "08:00h": 1378.0}, "daily": 932.0}, "Taylany Souza Lima": {"hours": {"07:00h": 813.0, "08:00h": 524.0}, "daily": 643.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1520.0, "09:00h": 973.0}, "daily": 1284.0}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"09:00h": 50.0}, "daily": 50}}, "08/06": {"Samara Santos Barbosa": {"hours": {"02:00h": 1048.0}, "daily": 1048}, "Rafaela Aparecida Dos Santos": {"hours": {"02:00h": 847.0, "03:00h": 883.0, "04:00h": 774.0}, "daily": 835}, "Erica Maria Dos Santos": {"hours": {"02:00h": 974.0, "03:00h": 1090.0, "04:00h": 971.0}, "daily": 1012}, "Barbara Florenca Silva": {"hours": {"02:00h": 1114.0, "03:00h": 1117.0, "04:00h": 761.0}, "daily": 997}, "Ingrid De Assis Nascimento": {"hours": {"04:00h": 479.0}, "daily": 479}}, "09/06": {"Kaua Batista Faria": {"hours": {"02:00h": 1028.0}, "daily": 1028}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1177.0, "03:00h": 1111.0}, "daily": 1107.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1132.0, "03:00h": 1004.0, "08:00h": 1424.0, "09:00h": 1290.0}, "daily": 1066.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1555.0, "09:00h": 1535.0}, "daily": 1380.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1227.0, "09:00h": 1204.0}, "daily": 1138.0}}, "10/06": {"Kaua Batista Faria": {"hours": {"02:00h": 1554.0, "03:00h": 1346.0, "04:00h": 1314.0}, "daily": 1405}, "Jaqueline Neves": {"hours": {"02:00h": 936.0, "03:00h": 1264.0, "04:00h": 993.0, "09:00h": 919.0}, "daily": 1064}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1304.0, "03:00h": 1151.0, "04:00h": 1222.0}, "daily": 1226}, "Barbara Florenca Silva": {"hours": {"02:00h": 933.0, "03:00h": 1194.0, "04:00h": 943.0, "08:00h": 1547.0, "09:00h": 1586.0}, "daily": 1023}, "Stefanie Oliveira Fernandes Tavares": {"hours": {"08:00h": 1793.0, "09:00h": 1221.0}, "daily": 1507}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1730.0, "09:00h": 1161.0}, "daily": 1446}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 1585.0, "09:00h": 1549.0}, "daily": 1567}, "Matheus Ferreira Carlos De Oliveira": {"hours": {"08:00h": 94.0, "09:00h": 110.0}, "daily": 102}, "Taylany Souza Lima": {"hours": {"09:00h": 857.0}, "daily": 857}}, "11/06": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"02:00h": 1338.0, "03:00h": 1150.0, "04:00h": 949.0, "08:00h": 1346.0, "09:00h": 1105.0}, "daily": 1128.0}, "Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1309.0, "03:00h": 1235.0, "04:00h": 846.0}, "daily": 1084.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1525.0, "03:00h": 1180.0, "04:00h": 979.0}, "daily": 1217.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1307.0, "03:00h": 1093.0, "04:00h": 847.0, "08:00h": 1589.0, "09:00h": 1320.0}, "daily": 1116.0}, "Rafaella De Bessas Silva": {"hours": {"08:00h": 1299.0, "09:00h": 1002.0}, "daily": 897.0}, "Jaqueline Neves": {"hours": {"08:00h": 1539.0, "09:00h": 1506.0}, "daily": 1516.0}}, "12/06": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1184.0, "03:00h": 1062.0, "04:00h": 1163.0}, "daily": 1136}, "Jaqueline Neves": {"hours": {"02:00h": 1378.0, "03:00h": 1404.0, "04:00h": 1156.0}, "daily": 1313}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1292.0, "03:00h": 1008.0, "04:00h": 1287.0}, "daily": 1196}, "Barbara Florenca Silva": {"hours": {"02:00h": 1285.0, "03:00h": 1193.0, "04:00h": 1146.0}, "daily": 1208}}, "13/06": {"Luiza Fernanda Leonel Rodrigues": {"hours": {"02:00h": 1164.0, "03:00h": 1298.0, "04:00h": 1121.0}, "daily": 1213.0}, "Jaqueline Neves": {"hours": {"02:00h": 1043.0, "03:00h": 1038.0, "04:00h": 691.0, "08:00h": 1024.0, "09:00h": 1203.0}, "daily": 1014.0}, "Erica Maria Dos Santos": {"hours": {"02:00h": 1282.0, "03:00h": 1198.0, "04:00h": 1100.0, "08:00h": 693.0, "09:00h": 933.0}, "daily": 1099.0}, "Barbara Florenca Silva": {"hours": {"02:00h": 1205.0, "03:00h": 1018.0, "04:00h": 807.0}, "daily": 202.0}, "Rafaela Aparecida Dos Santos": {"hours": {"08:00h": 789.0, "09:00h": 1408.0}, "daily": 1221.0}, "Taylany Souza Lima": {"hours": {"08:00h": 885.0, "09:00h": 881.0}, "daily": 818.0}, "Gabriely Martins Da Silva": {"hours": {"09:00h": 600.0}, "daily": 600}}, "14/06": {"Vinicius Carvalho Araujo": {"hours": {"02:00h": 847.0}, "daily": 847}, "Kaua Batista Faria": {"hours": {"02:00h": 949.0, "03:00h": 675.0}, "daily": 812}, "Ingrid De Assis Nascimento": {"hours": {"02:00h": 768.0, "03:00h": 824.0}, "daily": 796}, "Emanuella Sinelandia De Lima": {"hours": {"02:00h": 936.0, "03:00h": 881.0}, "daily": 908}}, "15/06": {"Stefanie Oliveira Fernandes Tavares": {"hours": {"01:00h": 1013.0, "02:00h": 934.0, "03:00h": 863.0}, "daily": 937}, "Kaua Batista Faria": {"hours": {"01:00h": 795.0, "02:00h": 800.0, "03:00h": 780.0}, "daily": 792}, "Jaqueline Neves": {"hours": {"01:00h": 1447.0, "02:00h": 1068.0, "03:00h": 834.0}, "daily": 1116}, "Pamela De Souza Goncalves": {"hours": {"02:00h": 927.0, "03:00h": 790.0}, "daily": 858}}};
+// HELPERS
+function col(e){return e==null?'#9B9B96':e>=100?'#1A8C5F':e>=85?'#B06A00':'#C43B3B'}
+function colVar(e){return e==null?'var(--text3)':e>=100?'var(--green)':e>=85?'var(--amber)':'var(--red)'}
+function badge(e){
+  if(e==null)return '<span class="badge" style="background:#F0F0ED;color:#9B9B96">—</span>';
+  if(e>=100)return '<span class="badge badge-g">Acima</span>';
+  if(e>=85)return '<span class="badge badge-a">Próximo</span>';
+  return '<span class="badge badge-r">Abaixo</span>';
+}
+function fn(n){const p=n.split(' ');return p.slice(0,2).join(' ')}
+
+// VIEW SWITCHING
+const views=['geral','sorting','labeling','historico','individual','pessoal'];
+const navItems=document.querySelectorAll('.nav-item');
+function setView(v){
+  views.forEach(x=>document.getElementById('v-'+x).classList.remove('active'));
+  document.getElementById('v-'+v).classList.add('active');
+  navItems.forEach(n=>n.classList.toggle('active', n.getAttribute('onclick').includes("'"+v+"'")));
+  if(v==='sorting')buildSortingTab();
+  if(v==='labeling')buildLabelingTab();
+  if(v==='historico'){buildHistChart();buildHistTable();}
+  if(v==='individual')updatePersonList();
+  if(v==='pessoal')initPessoal();
+}
+
+// GERAL
+let geralBuilt=false;
+function buildGeral(){
+  if(geralBuilt)return; geralBuilt=true;
+  const seVals=Object.values(SE), leVals=Object.values(LE);
+  const aSe=Math.round(seVals.reduce((a,b)=>a+b,0)/seVals.length);
+  const aLe=Math.round(leVals.reduce((a,b)=>a+b,0)/leVals.length);
+  const aTe=Math.round((aSe+aLe)/2);
+  const gse=document.getElementById('g-se'); gse.textContent=aSe+'%'; gse.style.color=colVar(aSe);
+  const gle=document.getElementById('g-le'); gle.textContent=aLe+'%'; gle.style.color=colVar(aLe);
+  const gte=document.getElementById('g-te'); gte.textContent=aTe+'%'; gte.style.color=colVar(aTe);
+
+  new Chart(document.getElementById('cGeral'),{type:'line',data:{labels:DATES,datasets:[
+    {label:'Sorting',data:DATES.map(d=>SA[d]??null),borderColor:'#2B6CB0',backgroundColor:'rgba(43,108,176,.06)',tension:.35,fill:false,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#2B6CB0',spanGaps:true,yAxisID:'yS'},
+    {label:'Target Sort.',data:Array(DATES.length).fill(300),borderColor:'#2B6CB0',borderWidth:1.2,borderDash:[5,4],pointRadius:0,fill:false,spanGaps:true,yAxisID:'yS'},
+    {label:'Labeling',data:DATES.map(d=>LA[d]??null),borderColor:'#1A8C5F',backgroundColor:'rgba(26,140,95,.06)',tension:.35,fill:false,borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#1A8C5F',spanGaps:true,yAxisID:'yL'},
+    {label:'Target Lab.',data:Array(DATES.length).fill(1100),borderColor:'#1A8C5F',borderWidth:1.2,borderDash:[5,4],pointRadius:0,fill:false,spanGaps:true,yAxisID:'yL'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.yAxisID==='yS'?'Sort':'Lab';return `${t}: ${ctx.parsed.y.toLocaleString('pt-BR')}`}}}},scales:{
+    yS:{type:'linear',position:'left',min:0,max:600,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11},color:'#2B6CB0'},title:{display:true,text:'Sorting',color:'#2B6CB0',font:{size:11}}},
+    yL:{type:'linear',position:'right',min:0,max:2000,grid:{drawOnChartArea:false},ticks:{font:{size:11},color:'#1A8C5F'},title:{display:true,text:'Labeling',color:'#1A8C5F',font:{size:11}}},
+    x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:16,maxRotation:35}}
+  }}});
+
+  const sPa={};
+  DATES.forEach(d=>{if(SD[d])Object.entries(SD[d]).forEach(([n,v])=>{if(!sPa[n])sPa[n]={s:0,c:0};sPa[n].s+=v;sPa[n].c++;})});
+  const sTop=Object.entries(sPa).filter(([n,x])=>x.c>=3).map(([n,x])=>({n,avg:Math.round(x.s/x.c)})).sort((a,b)=>b.avg-a.avg).slice(0,5);
+  const tb1=document.getElementById('t-top-s'); tb1.innerHTML='';
+  sTop.forEach((p,i)=>{const e=Math.round(p.avg/TS*100);const tr=document.createElement('tr');tr.innerHTML=`<td style="color:var(--text3);font-weight:600">${i+1}</td><td>${fn(p.n)}</td><td style="font-weight:600">${p.avg}</td><td style="color:${colVar(e)};font-weight:700">${e}%</td>`;tb1.appendChild(tr);});
+
+  const lPa={};
+  DATES.forEach(d=>{if(LD[d])Object.entries(LD[d]).forEach(([n,v])=>{if(!lPa[n])lPa[n]={s:0,c:0};lPa[n].s+=v;lPa[n].c++;})});
+  const lTop=Object.entries(lPa).filter(([n,x])=>x.c>=2).map(([n,x])=>({n,avg:Math.round(x.s/x.c)})).sort((a,b)=>b.avg-a.avg).slice(0,5);
+  const tb2=document.getElementById('t-top-l'); tb2.innerHTML='';
+  lTop.forEach((p,i)=>{const e=Math.round(p.avg/TL*100);const tr=document.createElement('tr');tr.innerHTML=`<td style="color:var(--text3);font-weight:600">${i+1}</td><td>${fn(p.n)}</td><td style="font-weight:600">${p.avg.toLocaleString('pt-BR')}</td><td style="color:${colVar(e)};font-weight:700">${e}%</td>`;tb2.appendChild(tr);});
+}
+
+// SORTING
+let curS=DATES[DATES.length-1];
+function buildSortingTab(){
+  const allP=DATES.flatMap(d=>SD[d]?Object.values(SD[d]):[]);
+  const a=Math.round(allP.reduce((a,b)=>a+b,0)/allP.length);
+  document.getElementById('s-med').textContent=a;
+  document.getElementById('s-med-e').textContent=Math.round(a/TS*100)+'% efic. média';
+  const effs=Object.values(SE);
+  document.getElementById('s-dias-ac').textContent=effs.filter(e=>e>=100).length;
+  const best=Object.entries(SE).reduce((b,e)=>e[1]>b[1]?e:b);
+  document.getElementById('s-best').textContent=best[1]+'%';
+  document.getElementById('s-best-d').textContent=best[0];
+  const recent=DATES.filter(d=>SD[d]&&Object.keys(SD[d]).length).slice(-7);
+  if(!recent.includes(curS))curS=recent[recent.length-1];
+  const ht=document.getElementById('ht-s'); ht.innerHTML='';
+  recent.forEach(d=>{const b=document.createElement('button');b.className='date-tab'+(d===curS?' active':'');b.textContent=d;b.onclick=()=>{curS=d;document.querySelectorAll('#ht-s .date-tab').forEach(x=>x.classList.toggle('active',x.textContent===d));buildSTable(d)};ht.appendChild(b);});
+  buildSTable(curS);
+}
+function buildSTable(date){
+  const tb=document.getElementById('tb-s'); tb.innerHTML='';
+  Object.entries(SD[date]||{}).sort((a,b)=>b[1]-a[1]).forEach(([name,prod])=>{
+    const e=Math.round(prod/TS*100);const pct=Math.min(e,130);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${fn(name)}</td><td style="font-weight:600">${prod}</td><td style="color:${colVar(e)};font-weight:700">${e}%</td><td><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${col(e)}"></div></div></td><td>${badge(e)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// LABELING
+let curL=DATES[DATES.length-1];
+function buildLabelingTab(){
+  const allP=DATES.flatMap(d=>LD[d]?Object.values(LD[d]):[]);
+  const a=Math.round(allP.reduce((a,b)=>a+b,0)/allP.length);
+  document.getElementById('l-med').textContent=a.toLocaleString('pt-BR');
+  document.getElementById('l-med-e').textContent=Math.round(a/TL*100)+'% efic. média';
+  const effs=Object.values(LE);
+  document.getElementById('l-dias-ac').textContent=effs.filter(e=>e>=100).length;
+  const best=Object.entries(LE).reduce((b,e)=>e[1]>b[1]?e:b);
+  document.getElementById('l-best').textContent=best[1]+'%';
+  document.getElementById('l-best-d').textContent=best[0];
+  const recent=DATES.filter(d=>LD[d]&&Object.keys(LD[d]).length).slice(-7);
+  if(!recent.includes(curL))curL=recent[recent.length-1];
+  const ht=document.getElementById('ht-l'); ht.innerHTML='';
+  recent.forEach(d=>{const b=document.createElement('button');b.className='date-tab'+(d===curL?' active':'');b.textContent=d;b.onclick=()=>{curL=d;document.querySelectorAll('#ht-l .date-tab').forEach(x=>x.classList.toggle('active',x.textContent===d));buildLTable(d)};ht.appendChild(b);});
+  buildLTable(curL);
+}
+function buildLTable(date){
+  const tb=document.getElementById('tb-l'); tb.innerHTML='';
+  Object.entries(LD[date]||{}).sort((a,b)=>b[1]-a[1]).forEach(([name,prod])=>{
+    const e=Math.round(prod/TL*100);const pct=Math.min(e,130);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${fn(name)}</td><td style="font-weight:600">${prod.toLocaleString('pt-BR')}</td><td style="color:${colVar(e)};font-weight:700">${e}%</td><td><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${col(e)}"></div></div></td><td>${badge(e)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// HISTÓRICO
+let hChart=null;
+function buildHistChart(){
+  if(hChart)hChart.destroy();
+  hChart=new Chart(document.getElementById('cHist'),{type:'bar',data:{labels:DATES,datasets:[
+    {label:'Sorting',data:DATES.map(d=>SE[d]??null),backgroundColor:'rgba(43,108,176,.75)',borderRadius:3},
+    {label:'Labeling',data:DATES.map(d=>LE[d]??null),backgroundColor:'rgba(26,140,95,.75)',borderRadius:3}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+    y:{min:40,max:140,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11},callback:v=>v+'%'}},
+    x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:16,maxRotation:40}}
+  }}});
+}
+function buildHistTable(){
+  const tb=document.getElementById('tb-hist'); tb.innerHTML='';
+  DATES.forEach((d,i)=>{
+    const se=SE[d]??null, le=LE[d]??null;
+    const sp=SD[d]?Object.keys(SD[d]).length:0, lp=LD[d]?Object.keys(LD[d]).length:0;
+    const ge=(se!=null&&le!=null)?Math.round((se+le)/2):(se??le);
+    let trend='—';
+    if(i>0){
+      const pse=SE[DATES[i-1]]??null, ple=LE[DATES[i-1]]??null;
+      const pge=(pse!=null&&ple!=null)?Math.round((pse+ple)/2):(pse??ple);
+      if(ge!=null&&pge!=null){const diff=ge-pge;trend=diff>0?`<span class="tu">▲ +${diff}%</span>`:diff<0?`<span class="td2">▼ ${diff}%</span>`:`<span class="te">→</span>`;}
+    }
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:600">${d}</td><td style="color:${colVar(se)};font-weight:600">${se!=null?se+'%':'—'}</td><td style="color:var(--text2)">${sp||'—'}</td><td style="color:${colVar(le)};font-weight:600">${le!=null?le+'%':'—'}</td><td style="color:var(--text2)">${lp||'—'}</td><td style="color:${colVar(ge)};font-weight:700">${ge!=null?ge+'%':'—'}</td><td>${trend}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// INDIVIDUAL
+let pChart=null;
+function updatePersonList(){
+  const op=document.getElementById('sel-op').value;
+  const sel=document.getElementById('sel-person');
+  const days=op==='sorting'?SD:LD;
+  const people=new Set();
+  DATES.forEach(d=>{if(days[d])Object.keys(days[d]).forEach(n=>people.add(n))});
+  sel.innerHTML='<option value="">Selecione um colaborador</option>';
+  [...people].sort().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+  if(pChart){pChart.destroy();pChart=null;}
+  document.getElementById('tb-person').innerHTML='';
+}
+function buildPersonChart(){
+  const op=document.getElementById('sel-op').value;
+  const name=document.getElementById('sel-person').value;
+  if(!name)return;
+  if(pChart)pChart.destroy();
+  const days=op==='sorting'?SD:LD;
+  const target=op==='sorting'?TS:TL;
+  const vals=DATES.map(d=>days[d]&&days[d][name]!=null?days[d][name]:null);
+  const colors=vals.map(v=>v==null?'transparent':v>=target?'#1A8C5F':v>=target*.85?'#B06A00':'#C43B3B');
+  pChart=new Chart(document.getElementById('cPerson'),{type:'bar',data:{labels:DATES,datasets:[
+    {label:'Produção',data:vals,backgroundColor:colors,borderRadius:4},
+    {label:'Target',data:Array(DATES.length).fill(target),type:'line',borderColor:'#9B9B96',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+    title:{display:true,text:name,font:{size:13,weight:'600'},color:'#1A1A18'}},
+    scales:{y:{beginAtZero:false,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}}},
+            x:{grid:{display:false},ticks:{font:{size:10},maxTicksLimit:16,maxRotation:40}}}}});
+
+  const tb=document.getElementById('tb-person'); tb.innerHTML='';
+  DATES.forEach(d=>{
+    const prod=days[d]&&days[d][name]!=null?days[d][name]:null;
+    if(prod==null)return;
+    const e=Math.round(prod/target*100);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-weight:600">${d}</td><td style="font-weight:600">${prod.toLocaleString('pt-BR')}</td><td style="color:${colVar(e)};font-weight:700">${e}%</td><td>${badge(e)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+
+// ---- EFICIÊNCIA PESSOAL ----
+let epDaysChart=null, epHoursChart=null;
+
+function initPessoal(){
+  epUpdatePeople();
+}
+
+function epUpdatePeople(){
+  const op=document.getElementById('ep-op').value;
+  const days=op==='sorting'?SF:LF;
+  const sel=document.getElementById('ep-person');
+  const prev=sel.value;
+  const people=new Set();
+  Object.values(days).forEach(day=>Object.keys(day).forEach(n=>people.add(n)));
+  sel.innerHTML='<option value="">Selecione um colaborador</option>';
+  [...people].sort().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+  if(prev&&[...people].includes(prev)){sel.value=prev;epRender();}
+  else{
+    ['ep-metrics','ep-card-days','ep-card-hours','ep-card-table'].forEach(id=>document.getElementById(id).style.display='none');
+    if(epDaysChart){epDaysChart.destroy();epDaysChart=null;}
+    if(epHoursChart){epHoursChart.destroy();epHoursChart=null;}
+  }
+}
+
+function epRender(){
+  const op=document.getElementById('ep-op').value;
+  const name=document.getElementById('ep-person').value;
+  if(!name)return;
+  const days=op==='sorting'?SF:LF;
+  const target=op==='sorting'?TS:TL;
+  const label=op==='sorting'?'Sorting':'Labeling';
+  const DATES_OP=Object.keys(days).sort((a,b)=>{
+    const [da,ma]=[a.split('/')[0],a.split('/')[1]];
+    const [db,mb]=[b.split('/')[0],b.split('/')[1]];
+    return new Date(`2026-${ma}-${da}`)-new Date(`2026-${mb}-${db}`);
+  });
+
+  // Get this person's data across all dates
+  const personDays=[];
+  DATES_OP.forEach(d=>{
+    if(days[d]&&days[d][name]){
+      personDays.push({date:d, daily:days[d][name].daily, hours:days[d][name].hours});
+    }
+  });
+
+  if(!personDays.length){
+    document.getElementById('ep-info').textContent='Sem dados para este colaborador.';
+    return;
+  }
+  document.getElementById('ep-info').textContent='';
+
+  // KPIs
+  const dailyVals=personDays.map(p=>p.daily).filter(x=>x>0);
+  const avgD=Math.round(dailyVals.reduce((a,b)=>a+b,0)/dailyVals.length);
+  const bestDay=personDays.reduce((b,p)=>(p.daily||0)>(b.daily||0)?p:b);
+  const acima=dailyVals.filter(v=>v>=target).length;
+  document.getElementById('ep-metrics').style.display='';
+  document.getElementById('ep-dias').textContent=personDays.length;
+  document.getElementById('ep-med').textContent=avgD.toLocaleString('pt-BR');
+  document.getElementById('ep-med-e').textContent=Math.round(avgD/target*100)+'% de eficiência';
+  document.getElementById('ep-best').textContent=(bestDay.daily||0).toLocaleString('pt-BR');
+  document.getElementById('ep-best-d').textContent=bestDay.date;
+  document.getElementById('ep-ac').textContent=acima;
+  document.getElementById('ep-ac-p').textContent=Math.round(acima/personDays.length*100)+'% dos dias';
+
+  // --- CHART DIAS ---
+  document.getElementById('ep-card-days').style.display='';
+  document.getElementById('ep-title-days').textContent=`${name.split(' ')[0]} — histórico diário (${label})`;
+  if(epDaysChart){epDaysChart.destroy();}
+  const dLabels=personDays.map(p=>p.date);
+  const dVals=personDays.map(p=>p.daily||0);
+  const dColors=dVals.map(v=>v>=target?'#1A8C5F':v>=target*.85?'#B06A00':'#C43B3B');
+  epDaysChart=new Chart(document.getElementById('ep-chart-days'),{
+    type:'bar',
+    data:{labels:dLabels,datasets:[
+      {label:'Produção',data:dVals,backgroundColor:dColors,borderRadius:4},
+      {label:'Target',data:Array(dLabels.length).fill(target),type:'line',borderColor:'#9B9B96',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString('pt-BR')}}},
+      scales:{y:{beginAtZero:false,min:Math.max(0,Math.min(...dVals)-100),grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}}},
+              x:{grid:{display:false},ticks:{font:{size:10},maxRotation:40}}}}
+  });
+
+  // --- CHART HORÁRIOS ---
+  // Aggregate: for each hour, collect all values across all days, compute avg
+  document.getElementById('ep-card-hours').style.display='';
+  document.getElementById('ep-title-hours').textContent=`${name.split(' ')[0]} — produção média por horário`;
+  const hourMap={};
+  personDays.forEach(p=>{
+    Object.entries(p.hours).forEach(([h,v])=>{
+      if(!hourMap[h])hourMap[h]=[];
+      hourMap[h].push(v);
+    });
+  });
+  // Sort hours
+  const sortedHours=Object.keys(hourMap).sort();
+  const hAvgs=sortedHours.map(h=>Math.round(hourMap[h].reduce((a,b)=>a+b,0)/hourMap[h].length));
+  const hColors=hAvgs.map(v=>v>=target?'#1A8C5F':v>=target*.85?'#B06A00':'#C43B3B');
+  if(epHoursChart){epHoursChart.destroy();}
+  epHoursChart=new Chart(document.getElementById('ep-chart-hours'),{
+    type:'bar',
+    data:{labels:sortedHours,datasets:[
+      {label:'Média',data:hAvgs,backgroundColor:hColors,borderRadius:4,barPercentage:.6},
+      {label:'Target',data:Array(sortedHours.length).fill(target),type:'line',borderColor:'#9B9B96',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toLocaleString('pt-BR')}}},
+      scales:{y:{beginAtZero:false,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}}},
+              x:{grid:{display:false},ticks:{font:{size:11}}}}}
+  });
+
+  // --- TABELA EXPANDÍVEL DE DIAS ---
+  document.getElementById('ep-card-table').style.display='';
+  const list=document.getElementById('ep-day-list');
+  list.innerHTML='';
+  [...personDays].reverse().forEach(p=>{
+    const e=Math.round((p.daily||0)/target*100);
+    const sortedH=Object.entries(p.hours).sort((a,b)=>a[0].localeCompare(b[0]));
+    const div=document.createElement('div');
+    div.style.cssText='border-bottom:1px solid var(--border);';
+    const header=document.createElement('div');
+    header.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 4px;cursor:pointer;user-select:none;';
+    const ehColor=e>=100?'var(--green)':e>=85?'var(--amber)':'var(--red)';
+    header.innerHTML=`
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-weight:600;min-width:50px">${p.date}</span>
+        <span style="font-size:12px;color:var(--text2)">${sortedH.length} horários registrados</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-weight:700;color:${ehColor}">${e}%</span>
+        <span style="font-weight:600">${(p.daily||0).toLocaleString('pt-BR')} un</span>
+        <span style="color:var(--text3);font-size:16px" class="ep-arrow">▸</span>
+      </div>`;
+    const body=document.createElement('div');
+    body.style.cssText='display:none;padding:0 4px 12px;';
+    // Hours table
+    let thtml='<table style="width:100%"><thead><tr><th>Horário</th><th>Produção</th><th>Eficiência</th><th style="min-width:80px">Progresso</th></tr></thead><tbody>';
+    sortedH.forEach(([h,v])=>{
+      const he=Math.round(v/target*100);const hpct=Math.min(he,130);
+      const hc=he>=100?'var(--green)':he>=85?'var(--amber)':'var(--red)';
+      thtml+=`<tr><td style="font-weight:500">${h}</td><td style="font-weight:600">${v.toLocaleString('pt-BR')}</td><td style="color:${hc};font-weight:700">${he}%</td><td><div class="bar-wrap"><div class="bar-fill" style="width:${hpct}%;background:${he>=100?'#1A8C5F':he>=85?'#B06A00':'#C43B3B'}"></div></div></td></tr>`;
+    });
+    thtml+='</tbody></table>';
+    body.innerHTML=thtml;
+    let open=false;
+    header.onclick=()=>{
+      open=!open;
+      body.style.display=open?'block':'none';
+      header.querySelector('.ep-arrow').textContent=open?'▾':'▸';
+    };
+    div.appendChild(header);
+    div.appendChild(body);
+    list.appendChild(div);
+  });
+}
+
+buildGeral();
+
+
+// Override setView to sync sidebar highlight
+const _sv = setView;
+window.setView = function(v) {
+  _sv(v);
+  setActiveNav([v]);
+};
+</script>
+
 </body>
 </html>
