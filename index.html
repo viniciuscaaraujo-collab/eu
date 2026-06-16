@@ -708,11 +708,18 @@ function setActiveNav(ids) {
   });
 }
 
+let prodBuilt = false;
 function switchPanel(name) {
   document.querySelectorAll('.dashboard-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  if (name === 'auditoria') { setActiveNav(['auditoria']); renderAll(); }
-  if (name === 'prod')      { setActiveNav(['geral']); buildGeral(); }
+  if (name === 'auditoria') {
+    setActiveNav(['auditoria']);
+    setTimeout(renderAll, 50);
+  }
+  if (name === 'prod') {
+    setActiveNav(['geral']);
+    setTimeout(function(){ buildGeral(); prodBuilt = true; }, 50);
+  }
 }
 </script>
 
@@ -802,7 +809,10 @@ function limpar(){
   document.getElementById('f-ini').value='2026-01-02';document.getElementById('f-fim').value='2026-06-15';
   document.getElementById('f-mes').value='';document.getElementById('f-perf').value='';renderAll();
 }
-renderAll();
+// Defer initial render to after full DOM load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(renderAll, 50);
+});
 
 </script>
 
@@ -1168,9 +1178,6 @@ function epRender(){
     list.appendChild(div);
   });
 }
-
-buildGeral();
-
 
 // Override setView to sync sidebar highlight
 const _sv = setView;
